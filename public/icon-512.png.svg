@@ -1,0 +1,51 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <circle cx="256" cy="256" r="256" fill="#010A13"/>
+  
+  <!-- Multiple decorative rings -->
+  <circle cx="256" cy="256" r="240" stroke="#0596AA" stroke-width="8" fill="none"/>
+  <circle cx="256" cy="256" r="220" stroke="#C89B3C" stroke-width="4" fill="none" opacity="0.8"/>
+  <circle cx="256" cy="256" r="200" stroke="#F0E6D2" stroke-width="2" fill="none" opacity="0.4"/>
+  
+  <!-- Main emblem -->
+  <g transform="translate(256, 256)">
+    <!-- Large champion sword -->
+    <path d="M0 -130L30 -80L90 -110L60 -50L120 -20L0 20L-120 -20L-60 -50L-90 -110L-30 -80L0 -130Z" 
+          fill="#F0E6D2" stroke="#C89B3C" stroke-width="6"/>
+    
+    <!-- Inner decorative elements -->
+    <path d="M0 -100L20 -60L60 -80L40 -40L80 -20L0 0L-80 -20L-40 -40L-60 -80L-20 -60L0 -100Z" 
+          fill="#0596AA" opacity="0.7"/>
+    
+    <!-- Central power core -->
+    <circle r="45" fill="url(#coreGradient)"/>
+    <circle r="35" fill="#0596AA"/>
+    <circle r="25" fill="url(#innerGradient)"/>
+    <circle r="15" fill="#F0E6D2"/>
+    
+    <!-- Bottom crown decoration -->
+    <path d="M-60 80L0 160L60 80L0 120L-60 80Z" fill="#C89B3C"/>
+    
+    <!-- Side wing decorations -->
+    <path d="M-140 -30L-110 0L-140 30L-125 0Z" fill="#0596AA"/>
+    <path d="M140 -30L110 0L140 30L125 0Z" fill="#0596AA"/>
+    
+    <!-- Additional detail elements -->
+    <path d="M-30 -130L-15 -140L0 -150L15 -140L30 -130L15 -120L0 -110L-15 -120Z" 
+          fill="#C89B3C"/>
+  </g>
+  
+  <!-- Gradient definitions -->
+  <defs>
+    <radialGradient id="coreGradient" cx="0.5" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#F0E6D2"/>
+      <stop offset="30%" stop-color="#C89B3C"/>
+      <stop offset="70%" stop-color="#0596AA"/>
+      <stop offset="100%" stop-color="#010A13"/>
+    </radialGradient>
+    <radialGradient id="innerGradient" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" stop-color="#F0E6D2"/>
+      <stop offset="100%" stop-color="#0596AA"/>
+    </radialGradient>
+  </defs>
+</svg>

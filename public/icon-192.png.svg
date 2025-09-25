@@ -1,0 +1,36 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="96" fill="#010A13"/>
+  
+  <!-- Outer decorative ring -->
+  <circle cx="96" cy="96" r="84" stroke="#0596AA" stroke-width="4" fill="none"/>
+  <circle cx="96" cy="96" r="76" stroke="#C89B3C" stroke-width="2" fill="none" opacity="0.6"/>
+  
+  <!-- Main champion emblem -->
+  <g transform="translate(96, 96)">
+    <!-- Central sword/blade -->
+    <path d="M0 -50L12 -30L36 -42L24 -18L48 -6L0 6L-48 -6L-24 -18L-36 -42L-12 -30L0 -50Z" 
+          fill="#F0E6D2" stroke="#C89B3C" stroke-width="2"/>
+    
+    <!-- Power crystal center -->
+    <circle r="18" fill="url(#powerGradient)"/>
+    <circle r="12" fill="#0596AA"/>
+    <circle r="6" fill="#F0E6D2"/>
+    
+    <!-- Bottom crown/decoration -->
+    <path d="M-24 30L0 66L24 30L0 42L-24 30Z" fill="#C89B3C"/>
+    
+    <!-- Side decorations -->
+    <path d="M-54 -12L-42 0L-54 12L-48 0Z" fill="#0596AA"/>
+    <path d="M54 -12L42 0L54 12L48 0Z" fill="#0596AA"/>
+  </g>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <radialGradient id="powerGradient" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#F0E6D2"/>
+      <stop offset="50%" stop-color="#0596AA"/>
+      <stop offset="100%" stop-color="#010A13"/>
+    </radialGradient>
+  </defs>
+</svg>

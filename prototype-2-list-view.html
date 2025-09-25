@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL Cheat Sheet - Design 2: List View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'riot-gold': '#F0E6D2',
+                        'riot-blue': '#0596AA',
+                        'riot-dark': '#010A13',
+                        'riot-gray': '#1E2328',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-riot-dark text-riot-gold min-h-screen">
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-riot-gray border-t border-gray-700 z-50">
+        <div class="flex">
+            <button class="flex-1 py-3 text-center bg-riot-blue text-white">
+                <div class="text-lg">🏆</div>
+                <div class="text-xs">Champions</div>
+            </button>
+            <button class="flex-1 py-3 text-center text-gray-400">
+                <div class="text-lg">⚔️</div>
+                <div class="text-xs">Items</div>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header with Search -->
+    <header class="bg-riot-gray shadow-lg sticky top-0 z-40">
+        <div class="px-4 py-4">
+            <div class="flex items-center justify-between mb-3">
+                <h1 class="text-lg font-bold">LoL Champions</h1>
+                <button class="px-3 py-1 bg-green-600 text-white rounded text-xs">
+                    🔄 Sync
+                </button>
+            </div>
+            <input type="text" placeholder="Search champions..." 
+                   class="w-full px-4 py-2 bg-riot-dark border border-gray-600 rounded-full text-riot-gold placeholder-gray-400 focus:outline-none focus:border-riot-blue">
+        </div>
+    </header>
+
+    <!-- Content -->
+    <main class="pb-20">
+        <!-- Favorites Section -->
+        <section class="bg-gradient-to-r from-blue-900 to-purple-800 mx-4 my-4 rounded-lg border border-blue-700/50">
+            <div class="p-4">
+                <h2 class="text-sm font-semibold text-blue-200 mb-3 flex items-center">
+                    ⭐ FAVORITES (2)
+                </h2>
+                
+                <!-- Horizontal Scroll for Favorites -->
+                <div class="flex space-x-3 overflow-x-auto pb-2">
+                    <div class="flex-shrink-0 bg-blue-800/60 backdrop-blur-sm rounded-lg p-2 min-w-[80px] border border-blue-600/30">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Aatrox.png" 
+                             alt="Aatrox" class="w-12 h-12 rounded mx-auto mb-1">
+                        <p class="text-xs text-center text-blue-100">Aatrox</p>
+                    </div>
+                    <div class="flex-shrink-0 bg-blue-800/60 backdrop-blur-sm rounded-lg p-2 min-w-[80px] border border-blue-600/30">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Jinx.png" 
+                             alt="Jinx" class="w-12 h-12 rounded mx-auto mb-1">
+                        <p class="text-xs text-center text-blue-100">Jinx</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Champions List -->
+        <section class="px-4">
+            <h2 class="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wide">All Champions (165)</h2>
+            
+            <div class="space-y-2">
+                <!-- Champion List Items -->
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Aatrox.png" 
+                         alt="Aatrox" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Aatrox</h3>
+                        <p class="text-sm text-gray-400">The Darkin Blade</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-red-900 text-red-200 text-xs rounded">Fighter</span>
+                        <button class="text-yellow-400 text-lg">⭐</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Ahri.png" 
+                         alt="Ahri" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Ahri</h3>
+                        <p class="text-sm text-gray-400">The Nine-Tailed Fox</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-blue-900 text-blue-200 text-xs rounded">Mage</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Akali.png" 
+                         alt="Akali" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Akali</h3>
+                        <p class="text-sm text-gray-400">The Rogue Assassin</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-purple-900 text-purple-200 text-xs rounded">Assassin</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Alistar.png" 
+                         alt="Alistar" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Alistar</h3>
+                        <p class="text-sm text-gray-400">The Minotaur</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-green-900 text-green-200 text-xs rounded">Support</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Amumu.png" 
+                         alt="Amumu" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Amumu</h3>
+                        <p class="text-sm text-gray-400">The Sad Mummy</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-yellow-900 text-yellow-200 text-xs rounded">Tank</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Anivia.png" 
+                         alt="Anivia" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Anivia</h3>
+                        <p class="text-sm text-gray-400">The Cryophoenix</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-blue-900 text-blue-200 text-xs rounded">Mage</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Annie.png" 
+                         alt="Annie" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Annie</h3>
+                        <p class="text-sm text-gray-400">The Dark Child</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-blue-900 text-blue-200 text-xs rounded">Mage</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+
+                <div class="bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Aphelios.png" 
+                         alt="Aphelios" class="w-12 h-12 rounded">
+                    <div class="flex-1">
+                        <h3 class="font-medium">Aphelios</h3>
+                        <p class="text-sm text-gray-400">The Weapon of the Faithful</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-orange-900 text-orange-200 text-xs rounded">Marksman</span>
+                        <button class="text-gray-400 text-lg hover:text-yellow-400">☆</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Champion Detail Slide-up Panel -->
+    <div id="championDetail" class="fixed inset-0 bg-riot-dark transform translate-y-full transition-transform duration-300 z-50">
+        <div class="h-full overflow-y-auto">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-red-900 to-red-700 relative min-h-[60vh]">
+                <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg" 
+                     alt="Champion Splash" class="w-full h-full min-h-[60vh] object-cover opacity-80">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+                <div class="absolute top-4 left-4 right-4 flex items-center justify-between">
+                    <button class="w-10 h-10 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center text-white">
+                        ×
+                    </button>
+                    <button class="w-10 h-10 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center text-yellow-400">
+                        ⭐
+                    </button>
+                </div>
+                <div class="absolute bottom-6 left-4 right-4">
+                    <h2 class="text-3xl font-bold text-white mb-2">Aatrox</h2>
+                    <p class="text-red-200 text-lg mb-3">The Darkin Blade</p>
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 bg-red-600/80 text-white text-sm rounded-full">Fighter</span>
+                        <span class="text-white/90 text-sm">● Melee</span>
+                        <span class="text-white/90 text-sm">Hard</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="bg-riot-gray sticky top-0 z-10">
+                <div class="flex">
+                    <button class="tab-btn flex-1 py-3 px-4 text-center border-b-2 border-riot-blue text-riot-blue bg-riot-dark" data-tab="overview">
+                        Overview
+                    </button>
+                    <button class="tab-btn flex-1 py-3 px-4 text-center border-b-2 border-transparent text-gray-400 hover:text-white" data-tab="abilities">
+                        Abilities
+                    </button>
+                    <button class="tab-btn flex-1 py-3 px-4 text-center border-b-2 border-transparent text-gray-400 hover:text-white" data-tab="skins">
+                        Skins
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-4">
+                <!-- Overview Tab -->
+                <div id="overview-tab" class="tab-content">
+                    <!-- Quick Stats -->
+                    <div class="flex justify-between items-center mb-6 bg-riot-gray rounded-lg p-4">
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-red-400">Fighter</div>
+                            <div class="text-xs text-gray-400">Primary Role</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-yellow-400">Hard</div>
+                            <div class="text-xs text-gray-400">Difficulty</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-bold text-blue-400">Melee</div>
+                            <div class="text-xs text-gray-400">Range Type</div>
+                        </div>
+                    </div>
+
+                    <!-- Champion Story -->
+                    <div class="bg-riot-gray rounded-lg p-4 mb-6">
+                        <h3 class="font-semibold mb-3 text-riot-blue">Champion Lore</h3>
+                        <p class="text-sm text-gray-300 leading-relaxed">
+                            Once honored defenders of Shurima against the Void, Aatrox and his brethren would eventually become an even greater threat to Runeterra, and were defeated only by cunning mortal sorcery. But after centuries of imprisonment, Aatrox was the first to find freedom once more, corrupting and transforming those foolish enough to try and wield the magical weapon that contained his essence. Now, with stolen flesh, he walks Runeterra in a brutal approximation of his previous form, seeking an apocalyptic and long overdue vengeance against the world, as well as a host who might return him to his true nature.
+                            
+                            The darkin are fallen god-warriors, once revered protectors of ancient Shurima who were corrupted by the Void and later imprisoned within their own weapons. Aatrox was among the greatest of these fallen champions, a noble warrior who fought valiantly against the Void's corruption. However, the endless battles against such cosmic horror eventually drove him and his brethren to madness. They became the very monsters they had sworn to destroy, wielding forbidden blood magic and spreading chaos across the land.
+                            
+                            When the surviving mortals finally found a way to defeat them, they used cunning magic to trap the darkin within their own weapons, condemning them to an eternity of imprisonment. For centuries, Aatrox lay dormant within his blade, his consciousness fragmented and his power diminished. But the weapon's dark hunger remained, calling out to those who would dare to wield it. When someone finally takes up his sword, Aatrox can possess their body, though he remains only a shadow of his former divine self.
+                        </p>
+                    </div>
+
+                    <!-- Additional Images -->
+                    <div class="bg-riot-gray rounded-lg p-4">
+                        <h3 class="font-semibold mb-3 text-riot-blue">Champion Gallery</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-riot-dark rounded-lg overflow-hidden">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg" 
+                                     alt="Loading Screen" class="w-full h-32 object-cover">
+                                <div class="p-2">
+                                    <p class="text-xs text-gray-400 text-center">Loading Screen</p>
+                                </div>
+                            </div>
+                            <div class="bg-riot-dark rounded-lg overflow-hidden">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Aatrox.png" 
+                                     alt="Portrait" class="w-full h-32 object-cover bg-gray-800">
+                                <div class="p-2">
+                                    <p class="text-xs text-gray-400 text-center">Champion Portrait</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Abilities Tab -->
+                <div id="abilities-tab" class="tab-content hidden">
+                    <div class="space-y-4">
+                        <!-- Passive -->
+                        <div class="bg-riot-gray rounded-lg p-4">
+                            <div class="flex items-start space-x-4 mb-3">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/passive/Aatrox_Passive.png" 
+                                     alt="Passive" class="w-16 h-16 rounded border-2 border-purple-500">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-purple-400">Deathbringer Stance</h4>
+                                        <span class="px-2 py-1 bg-purple-900/50 text-purple-200 text-xs rounded">PASSIVE</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 leading-relaxed">
+                                        Periodically, Aatrox's next basic attack against an enemy champion deals bonus physical damage and heals him, based on the target's max health.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Q Ability -->
+                        <div class="bg-riot-gray rounded-lg p-4">
+                            <div class="flex items-start space-x-4 mb-3">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/spell/AatroxQ.png" 
+                                     alt="Q" class="w-16 h-16 rounded border-2 border-blue-500">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-blue-400">The Darkin Blade</h4>
+                                        <span class="px-2 py-1 bg-blue-900/50 text-blue-200 text-xs rounded">Q</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-2">
+                                        Aatrox slams his greatsword down, dealing physical damage. He can swing three times, each with a different area of effect.
+                                    </p>
+                                    <div class="text-xs text-gray-400">
+                                        <span class="text-yellow-400">Cooldown:</span> 14/12/10/8/6s | 
+                                        <span class="text-blue-400">Cost:</span> No Cost
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- W Ability -->
+                        <div class="bg-riot-gray rounded-lg p-4">
+                            <div class="flex items-start space-x-4 mb-3">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/spell/AatroxW.png" 
+                                     alt="W" class="w-16 h-16 rounded border-2 border-green-500">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-green-400">Infernal Chains</h4>
+                                        <span class="px-2 py-1 bg-green-900/50 text-green-200 text-xs rounded">W</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-2">
+                                        Aatrox smashes the ground, dealing damage to the first enemy hit. If it's a champion or large monster, they are chained to the area.
+                                    </p>
+                                    <div class="text-xs text-gray-400">
+                                        <span class="text-yellow-400">Cooldown:</span> 20/18.5/17/15.5/14s | 
+                                        <span class="text-blue-400">Cost:</span> No Cost
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- E Ability -->
+                        <div class="bg-riot-gray rounded-lg p-4">
+                            <div class="flex items-start space-x-4 mb-3">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/spell/AatroxE.png" 
+                                     alt="E" class="w-16 h-16 rounded border-2 border-orange-500">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-orange-400">Umbral Dash</h4>
+                                        <span class="px-2 py-1 bg-orange-900/50 text-orange-200 text-xs rounded">E</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-2">
+                                        Aatrox dashes, also gaining attack damage for a few seconds. Umbral Dash can be used while winding up The Darkin Blade.
+                                    </p>
+                                    <div class="text-xs text-gray-400">
+                                        <span class="text-yellow-400">Cooldown:</span> 9/8/7/6/5s | 
+                                        <span class="text-blue-400">Cost:</span> No Cost
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- R Ability -->
+                        <div class="bg-riot-gray rounded-lg p-4">
+                            <div class="flex items-start space-x-4 mb-3">
+                                <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/spell/AatroxR.png" 
+                                     alt="R" class="w-16 h-16 rounded border-2 border-red-500">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <h4 class="font-semibold text-red-400">World Ender</h4>
+                                        <span class="px-2 py-1 bg-red-900/50 text-red-200 text-xs rounded">ULTIMATE</span>
+                                    </div>
+                                    <p class="text-sm text-gray-300 leading-relaxed mb-2">
+                                        Aatrox reveals his true demonic form, gaining attack damage, increased healing, and movement speed. If he gets a takedown, this effect is extended.
+                                    </p>
+                                    <div class="text-xs text-gray-400">
+                                        <span class="text-yellow-400">Cooldown:</span> 120/100/80s | 
+                                        <span class="text-blue-400">Cost:</span> No Cost
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skins Tab -->
+                <div id="skins-tab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 gap-4">
+                        <!-- Classic Skin -->
+                        <div class="bg-riot-gray rounded-lg overflow-hidden">
+                            <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg" 
+                                 alt="Classic Aatrox" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h4 class="font-semibold mb-1">Classic Aatrox</h4>
+                                <p class="text-sm text-gray-400 mb-2">The original Darkin Blade design</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 bg-green-900/50 text-green-200 text-xs rounded">FREE</span>
+                                    <span class="text-xs text-gray-400">Released: Rework 2018</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Justicar Aatrox -->
+                        <div class="bg-riot-gray rounded-lg overflow-hidden">
+                            <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_1.jpg" 
+                                 alt="Justicar Aatrox" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h4 class="font-semibold mb-1">Justicar Aatrox</h4>
+                                <p class="text-sm text-gray-400 mb-2">A righteous warrior of light</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 bg-blue-900/50 text-blue-200 text-xs rounded">975 RP</span>
+                                    <span class="text-xs text-gray-400">Released: June 2013</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blood Moon Aatrox -->
+                        <div class="bg-riot-gray rounded-lg overflow-hidden">
+                            <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_3.jpg" 
+                                 alt="Blood Moon Aatrox" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h4 class="font-semibold mb-1">Blood Moon Aatrox</h4>
+                                <p class="text-sm text-gray-400 mb-2">Crimson demon of the Blood Moon cult</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 bg-red-900/50 text-red-200 text-xs rounded">1350 RP</span>
+                                    <span class="text-xs text-gray-400">Released: May 2017</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Odyssey Aatrox -->
+                        <div class="bg-riot-gray rounded-lg overflow-hidden">
+                            <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_8.jpg" 
+                                 alt="Odyssey Aatrox" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h4 class="font-semibold mb-1">Odyssey Aatrox</h4>
+                                <p class="text-sm text-gray-400 mb-2">Sci-fi space warrior with unique effects</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 bg-purple-900/50 text-purple-200 text-xs rounded">1350 RP</span>
+                                    <span class="text-xs text-gray-400">Released: September 2020</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prestige Blood Moon Aatrox -->
+                        <div class="bg-riot-gray rounded-lg overflow-hidden border border-yellow-500/50">
+                            <img src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_11.jpg" 
+                                 alt="Prestige Blood Moon Aatrox" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h4 class="font-semibold mb-1 text-yellow-400">Prestige Blood Moon Aatrox</h4>
+                                <p class="text-sm text-gray-400 mb-2">Exclusive golden variant of Blood Moon</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-2 py-1 bg-yellow-900/50 text-yellow-200 text-xs rounded">PRESTIGE</span>
+                                    <span class="text-xs text-gray-400">Limited Event</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const championRows = document.querySelectorAll('.cursor-pointer');
+            const detail = document.getElementById('championDetail');
+            
+            // Champion row click
+            championRows.forEach(row => {
+                row.addEventListener('click', () => {
+                    detail.classList.remove('translate-y-full');
+                });
+            });
+
+            // Close detail
+            detail.querySelector('button').addEventListener('click', () => {
+                detail.classList.add('translate-y-full');
+            });
+
+            // Tab functionality
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.dataset.tab;
+                    
+                    // Update button styles
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('border-riot-blue', 'text-riot-blue', 'bg-riot-dark');
+                        btn.classList.add('border-transparent', 'text-gray-400');
+                    });
+                    button.classList.remove('border-transparent', 'text-gray-400');
+                    button.classList.add('border-riot-blue', 'text-riot-blue', 'bg-riot-dark');
+                    
+                    // Show target content
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(targetTab + '-tab').classList.remove('hidden');
+                });
+            });
+
+            // Favorite toggle
+            document.querySelectorAll('button').forEach(btn => {
+                if (btn.textContent.includes('☆') || btn.textContent.includes('⭐')) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        btn.textContent = btn.textContent.includes('☆') ? '⭐' : '☆';
+                        btn.className = btn.textContent.includes('⭐') 
+                            ? btn.className.replace('text-gray-400', 'text-yellow-400')
+                            : btn.className.replace('text-yellow-400', 'text-gray-400');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

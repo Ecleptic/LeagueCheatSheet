@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Inter, system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .champion-card {
+    @apply bg-riot-gray rounded-lg p-3 flex items-center space-x-3 hover:bg-gray-700 transition-colors cursor-pointer;
+  }
+  
+  .role-badge {
+    @apply px-2 py-1 text-xs rounded;
+  }
+  
+  .role-fighter {
+    @apply bg-red-900 text-red-200;
+  }
+  
+  .role-mage {
+    @apply bg-blue-900 text-blue-200;
+  }
+  
+  .role-assassin {
+    @apply bg-purple-900 text-purple-200;
+  }
+  
+  .role-support {
+    @apply bg-green-900 text-green-200;
+  }
+  
+  .role-tank {
+    @apply bg-yellow-900 text-yellow-200;
+  }
+  
+  .role-marksman {
+    @apply bg-orange-900 text-orange-200;
+  }
+}
