@@ -11,8 +11,20 @@ const withPWA = require('next-pwa')({
       options: {
         cacheName: 'riot-api-cache',
         expiration: {
-          maxEntries: 200,
+          maxEntries: 500, // Increased for more images
           maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+      },
+    },
+    {
+      // Explicit caching for ability videos from Riot CDN
+      urlPattern: /^https:\/\/lol\.dyn\.riotcdn\.net\/.*/i,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'riot-video-cache',
+        expiration: {
+          maxEntries: 100,
+          maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days (videos change less frequently)
         },
       },
     },
