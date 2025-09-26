@@ -1,7 +1,7 @@
 'use client';
 
 import { useTeam } from '../contexts/TeamContext';
-import { Player, Team } from '../types/team';
+import { Player, Team, Position } from '../types/team';
 import { ChampionSummary, Item } from '../types/champion';
 import { SummonerSpell } from '../types/summonerSpell';
 
@@ -22,6 +22,9 @@ export const useTeamActions = () => {
     // Player actions
     setPlayerName: (team: 'blue' | 'red', playerId: string, name: string) =>
       dispatch({ type: 'SET_PLAYER_NAME', team, playerId, name }),
+
+    setPlayerPosition: (team: 'blue' | 'red', playerId: string, position: Position) =>
+      dispatch({ type: 'SET_PLAYER_POSITION', team, playerId, position }),
 
     setPlayerChampion: (team: 'blue' | 'red', playerId: string, champion: ChampionSummary) =>
       dispatch({ type: 'SET_PLAYER_CHAMPION', team, playerId, champion }),
@@ -59,6 +62,7 @@ export const usePlayerActions = (team: 'blue' | 'red', playerId: string) => {
 
   return {
     setName: (name: string) => teamActions.setPlayerName(team, playerId, name),
+    setPosition: (position: Position) => teamActions.setPlayerPosition(team, playerId, position),
     setChampion: (champion: ChampionSummary) => teamActions.setPlayerChampion(team, playerId, champion),
     removeChampion: () => teamActions.removePlayerChampion(team, playerId),
     setSummonerSpell: (slot: 0 | 1, spell: SummonerSpell) => 

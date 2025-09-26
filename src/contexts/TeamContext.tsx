@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { GameState, Team, Player, createDefaultGameState } from '../types/team';
+import { GameState, Team, Player, Position, createDefaultGameState } from '../types/team';
 import { ChampionSummary, Item } from '../types/champion';
 import { SummonerSpell } from '../types/summonerSpell';
 
@@ -12,6 +12,7 @@ export type TeamAction =
   | { type: 'SET_GAME_PHASE'; phase: 'draft' | 'early' | 'mid' | 'late' }
   | { type: 'SET_TEAM_NAME'; team: 'blue' | 'red'; name: string }
   | { type: 'SET_PLAYER_NAME'; team: 'blue' | 'red'; playerId: string; name: string }
+  | { type: 'SET_PLAYER_POSITION'; team: 'blue' | 'red'; playerId: string; position: Position }
   | { type: 'SET_PLAYER_CHAMPION'; team: 'blue' | 'red'; playerId: string; champion: ChampionSummary }
   | { type: 'REMOVE_PLAYER_CHAMPION'; team: 'blue' | 'red'; playerId: string }
   | { type: 'SET_SUMMONER_SPELL'; team: 'blue' | 'red'; playerId: string; slot: 0 | 1; spell: SummonerSpell }
@@ -57,6 +58,20 @@ const teamReducer = (state: GameState, action: TeamAction): GameState => {
       const team = state[action.team === 'blue' ? 'blueTeam' : 'redTeam'];
       const updatedPlayers = team.players.map(player =>
         player.id === action.playerId ? { ...player, name: action.name } : player
+      );
+      return {
+        ...state,
+        [action.team === 'blue' ? 'blueTeam' : 'redTeam']: {
+          ...team,
+          players: updatedPlayers
+        }
+      };
+    }
+
+    case 'SET_PLAYER_POSITION': {
+      const team = state[action.team === 'blue' ? 'blueTeam' : 'redTeam'];
+      const updatedPlayers = team.players.map(player =>
+        player.id === action.playerId ? { ...player, position: action.position } : player
       );
       return {
         ...state,
