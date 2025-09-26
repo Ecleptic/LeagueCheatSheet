@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { SummonerSpellSummary, SummonerSpell } from '@/types/summonerSpell';
 import { riotApi } from '@/lib/riot-api';
 
@@ -19,32 +20,24 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchSummonerSpellDetail = async () => {
+      if (!summonerSpell) return;
+      
+      try {
+        setLoading(true);
+        const response = await riotApi.getSummonerSpells();
+        setSummonerSpellDetail(response.data[summonerSpell.id]);
+      } catch (error) {
+        console.error('Error fetching summoner spell detail:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isOpen && summonerSpell) {
       fetchSummonerSpellDetail();
     }
   }, [isOpen, summonerSpell]);
-
-  const fetchSummonerSpellDetail = async () => {
-    if (!summonerSpell) return;
-    
-    try {
-      setLoading(true);
-      const response = await riotApi.getSummonerSpells();
-      setSummonerSpellDetail(response.data[summonerSpell.id]);
-    } catch (error) {
-      console.error('Error fetching summoner spell detail:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  if (!isOpen || !summonerSpell) return null;
 
   const [spellImageUrl, setSpellImageUrl] = useState<string>('');
   
@@ -55,6 +48,14 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
       });
     }
   }, [summonerSpell, isOpen]);
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  if (!isOpen || !summonerSpell) return null;
   
   // Clean HTML from descriptions
   const cleanDescription = (text: string) => text.replace(/<[^>]*>/g, '');
@@ -83,11 +84,13 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
           <div className="pt-16 pb-6 px-4">
             <div className="flex items-center space-x-4 mb-3">
               <div className="relative">
-                <img
+                <Image
                   src={spellImageUrl}
                   alt={summonerSpell.name}
+                  width={56}
+                  height={56}
                   className="w-14 h-14 rounded-lg border-2 border-white/20 bg-black/20 backdrop-blur-sm"
-                  loading="lazy"
+                  unoptimized={true}
                 />
                 <div className="absolute -bottom-1 -right-1 bg-riot-gold text-riot-dark rounded-full px-1.5 py-0.5 text-xs font-bold">
                   {summonerSpell.summonerLevel}

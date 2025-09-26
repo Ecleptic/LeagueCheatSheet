@@ -10,8 +10,35 @@ interface EsportsAPIOptions {
   locale?: string;
 }
 
+// Type for API request parameters
+type RequestParams = Record<string, string | number | boolean | (string | number)[] | undefined>;
+
+// Raw API response types
+interface RawEsportsEvent {
+  id?: string;
+  type?: string;
+  startTime?: string;
+  state?: 'unstarted' | 'inProgress' | 'completed';
+  blockName?: string;
+  league?: {
+    name?: string;
+    slug?: string;
+    [key: string]: unknown;
+  };
+  match?: {
+    strategy?: unknown;
+    teams?: unknown[];
+    flags?: unknown;
+    [key: string]: unknown;
+  };
+  teams?: unknown[];
+  streams?: unknown[];
+  tournament?: unknown;
+  [key: string]: unknown;
+}
+
 class EsportsAPI {
-  private async request(url: string, params: Record<string, any> = {}) {
+  private async request(url: string, params: RequestParams = {}) {
     const searchParams = new URLSearchParams();
     
     // Add default locale if not provided
@@ -106,7 +133,7 @@ class EsportsAPI {
 
   // Live game statistics endpoints
   async getLiveGameStats(gameId: number, startingTime?: string) {
-    const params: Record<string, any> = {};
+    const params: Record<string, string> = {};
     if (startingTime) {
       params.startingTime = startingTime;
     }
@@ -123,7 +150,7 @@ class EsportsAPI {
   }
 
   async getLiveGameDetails(gameId: number, startingTime?: string, participantIds?: string) {
-    const params: Record<string, any> = {};
+    const params: Record<string, string> = {};
     if (startingTime) params.startingTime = startingTime;
     if (participantIds) params.participantIds = participantIds;
     
@@ -139,7 +166,7 @@ class EsportsAPI {
   }
 
   async getMatchWindow(gameId: number, startingTime?: string) {
-    const params: Record<string, any> = {};
+    const params: Record<string, string> = {};
     if (startingTime) {
       params.startingTime = startingTime;
     }
@@ -156,7 +183,7 @@ class EsportsAPI {
   }
 
   async getMatchDetails(gameId: number, startingTime?: string, participantIds?: string) {
-    const params: Record<string, any> = {};
+    const params: Record<string, string> = {};
     if (startingTime) params.startingTime = startingTime;
     if (participantIds) params.participantIds = participantIds;
     
@@ -201,56 +228,60 @@ class EsportsAPI {
   }
 
   // Helper method to transform raw API event data to our Match interface
-  private transformEventToMatch(event: any): Match {
-    const transformed: any = {
+  private transformEventToMatch(event: RawEsportsEvent): Match {
+    const baseMatch: Match = {
       id: event.id || `${event.type}-${event.startTime}`,
-      startTime: event.startTime,
-      state: event.state as 'unstarted' | 'inProgress' | 'completed',
-      type: event.type,
+      startTime: event.startTime || '',
+      state: (event.state as 'unstarted' | 'inProgress' | 'completed') || 'unstarted',
+      type: event.type || '',
       blockName: event.blockName || event.league?.name || 'Unknown',
-      strategy: event.match?.strategy,
-      teams: event.match?.teams || event.teams || undefined
+      strategy: event.match?.strategy as Match['strategy'],
+      teams: (event.match?.teams || event.teams) as Match['teams']
     };
 
-    // Preserve additional data for enhanced display
-    if (event.league) transformed.league = event.league;
-    if (event.streams) transformed.streams = event.streams;
-    if (event.tournament) transformed.tournament = event.tournament;
-    if (event.match?.flags) transformed.match = { flags: event.match.flags };
+    // Create an extended match object with additional properties
+    const extendedMatch = { ...baseMatch } as Match & Record<string, unknown>;
 
-    return transformed as Match;
+    // Preserve additional data for enhanced display
+    if (event.league) extendedMatch.league = event.league;
+    if (event.streams) extendedMatch.streams = event.streams;
+    if (event.tournament) extendedMatch.tournament = event.tournament;
+    if (event.match?.flags) extendedMatch.match = { flags: event.match.flags };
+
+    return extendedMatch;
   }
 
   async getCurrentLiveMatches() {
     try {
       const response = await this.getLive();
-      const allEvents = response.data?.schedule?.events || [];
+      const allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
       
       // Filter for events that are currently in progress (both matches and shows)
-      const liveEvents = allEvents.filter((event: any) => 
+      const liveEvents = allEvents.filter((event: RawEsportsEvent) => 
         event.state === 'inProgress' && (event.type === 'match' || event.type === 'show')
       );
       
       // For live matches, try to get detailed game information
-      const enrichedEvents = await Promise.all(liveEvents.map(async (event: any) => {
+      const enrichedEvents = await Promise.all(liveEvents.map(async (event: RawEsportsEvent) => {
         const transformed = this.transformEventToMatch(event);
         
         // If it's a live match, try to get game details
         if (event.type === 'match' && event.id) {
           try {
             const eventDetails = await this.getEventDetails(parseInt(event.id));
-            const games = eventDetails.data?.event?.match?.games || [];
-            const liveGame = games.find((game: any) => game.state === 'inProgress');
+            const games = (eventDetails.data?.event?.match?.games || []) as { id?: string; state?: string; [key: string]: unknown }[];
+            const liveGame = games.find((game) => game.state === 'inProgress');
             
-            if (liveGame) {
+            if (liveGame && liveGame.id) {
               const [gameStats, gameDetails] = await Promise.all([
                 this.getLiveGameStats(parseInt(liveGame.id)),
                 this.getLiveGameDetails(parseInt(liveGame.id)).catch(() => null)
               ]);
               
-              (transformed as any).liveGameStats = gameStats;
-              (transformed as any).liveGameDetails = gameDetails;
-              (transformed as any).currentGame = liveGame;
+              const extendedTransformed = transformed as Match & Record<string, unknown>;
+              extendedTransformed.liveGameStats = gameStats;
+              extendedTransformed.liveGameDetails = gameDetails;
+              extendedTransformed.currentGame = liveGame;
             }
           } catch (error) {
             console.warn(`Failed to get live game stats for event ${event.id}:`, error);
@@ -271,21 +302,21 @@ class EsportsAPI {
     try {
       // Get all schedule data (no league filtering at API level)
       const response = await this.getSchedule([]);
-      const allEvents = response.data?.schedule?.events || [];
+      const allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
       
       // Filter to only upcoming matches (unstarted)
-      let upcomingMatches = allEvents.filter((event: any) => 
+      let upcomingMatches = allEvents.filter((event: RawEsportsEvent) => 
         event.state === 'unstarted' && event.type === 'match'
       );
       
       // Filter by league names if specified
       if (leagueNames.length > 0) {
-        upcomingMatches = upcomingMatches.filter((event: any) => 
-          leagueNames.includes(event.league?.name)
+        upcomingMatches = upcomingMatches.filter((event: RawEsportsEvent) => 
+          leagueNames.includes(event.league?.name || '')
         );
       }
       
-      return upcomingMatches.map((event: any) => this.transformEventToMatch(event));
+      return upcomingMatches.map((event: RawEsportsEvent) => this.transformEventToMatch(event));
     } catch (error) {
       console.error('Failed to fetch schedule:', error);
       return [];
@@ -296,19 +327,20 @@ class EsportsAPI {
     try {
       // Get all schedule data to extract unique leagues
       const response = await this.getSchedule([]);
-      const allEvents = response.data?.schedule?.events || [];
+      const allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
       
       // Extract unique leagues from matches
-      const leagueMap = new Map();
-      allEvents.forEach((event: any) => {
-        if (event.type === 'match' && event.league) {
+      const leagueMap = new Map<string, { name: string; slug: string; id: string }>();
+      allEvents.forEach((event: RawEsportsEvent) => {
+        if (event.type === 'match' && event.league?.name) {
           const league = event.league;
-          if (!leagueMap.has(league.name)) {
-            leagueMap.set(league.name, {
-              name: league.name,
-              slug: league.slug,
+          const leagueName = league.name;
+          if (leagueName && !leagueMap.has(leagueName)) {
+            leagueMap.set(leagueName, {
+              name: leagueName,
+              slug: league.slug || '',
               // Generate a consistent ID based on name for compatibility
-              id: league.name.toLowerCase().replace(/[^a-z0-9]/g, '-')
+              id: leagueName.toLowerCase().replace(/[^a-z0-9]/g, '-')
             });
           }
         }
@@ -325,19 +357,23 @@ class EsportsAPI {
   async getRecentResults(leagueIds: number[] = []) {
     try {
       const response = await this.getSchedule(leagueIds);
-      const allEvents = response.data?.schedule?.events || [];
+      const allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
       
       // Filter to only completed matches
-      const completedMatches = allEvents.filter((event: any) => 
+      const completedMatches = allEvents.filter((event: RawEsportsEvent) => 
         event.state === 'completed' && event.type === 'match'
       );
       
       // Sort by start time (most recent first) and limit to 20
       const sortedMatches = completedMatches
-        .sort((a: any, b: any) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
+        .sort((a: RawEsportsEvent, b: RawEsportsEvent) => {
+          const aTime = new Date(a.startTime || 0).getTime();
+          const bTime = new Date(b.startTime || 0).getTime();
+          return bTime - aTime;
+        })
         .slice(0, 20);
       
-      return sortedMatches.map((event: any) => this.transformEventToMatch(event));
+      return sortedMatches.map((event: RawEsportsEvent) => this.transformEventToMatch(event));
     } catch (error) {
       console.error('Failed to fetch results:', error);
       return [];

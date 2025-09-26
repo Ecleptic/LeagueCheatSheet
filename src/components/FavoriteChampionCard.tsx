@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ChampionSummary } from '@/types/champion';
 import { riotApi } from '@/lib/riot-api';
 import { useChampionPositions } from '@/hooks/useChampionPositions';
@@ -35,11 +36,14 @@ const FavoriteChampionCard: React.FC<FavoriteChampionCardProps> = ({
       className="bg-blue-800/60 backdrop-blur-sm rounded-lg p-2 border border-blue-600/30 cursor-pointer hover:bg-blue-700/60 transition-colors"
     >
       {championImageUrl ? (
-        <img
+        <Image
           src={championImageUrl}
           alt={champion.name}
+          width={48}
+          height={48}
           className="w-12 h-12 rounded mx-auto mb-1"
-          loading="lazy"
+          priority={false}
+          unoptimized={true}
         />
       ) : (
         <div className="w-12 h-12 rounded bg-gray-700 flex items-center justify-center mx-auto mb-1">

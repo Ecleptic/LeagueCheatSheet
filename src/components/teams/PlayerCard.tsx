@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { Player } from '../../types/team';
 import { usePlayerActions, useTeamValidation } from '../../hooks/useTeamActions';
 import { riotApi } from '../../lib/riot-api';
@@ -36,6 +37,17 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
     }
   }, [player.champion?.image?.full]);
 
+  // Create stable dependency values for complex checks
+  const summonerSpellDeps = useMemo(() => [
+    player.summonerSpells[0]?.image?.full,
+    player.summonerSpells[1]?.image?.full
+  ], [player.summonerSpells]);
+
+  const itemDeps = useMemo(() => 
+    player.items.map(item => item.item?.image?.full),
+    [player.items]
+  );
+
   // Load summoner spell image URLs when spells change
   useEffect(() => {
     const loadSpellImages = async () => {
@@ -48,7 +60,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
       setSummonerSpellImageUrls(urls);
     };
     loadSpellImages();
-  }, [player.summonerSpells[0]?.image?.full, player.summonerSpells[1]?.image?.full]);
+  }, [summonerSpellDeps, player.summonerSpells]);
 
   // Load item image URLs when items change
   useEffect(() => {
@@ -62,7 +74,8 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
       setItemImageUrls(urls);
     };
     loadItemImages();
-  }, [player.items.map(item => item.item?.image?.full).join(',')]);
+  }, [itemDeps, player.items]);
+
   const [tempName, setTempName] = useState(player.name);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showChampionSelector, setShowChampionSelector] = useState(false);
@@ -90,7 +103,6 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
   const teamBgColor = team === 'blue' 
     ? 'bg-lol-blue-dark/10 hover:bg-lol-blue-dark/20' 
     : 'bg-lol-red-dark/10 hover:bg-lol-red-dark/20';
-  const teamAccentColor = team === 'blue' ? 'text-lol-blue-accent' : 'text-lol-red-accent';
 
   return (
     <div className={`bg-riot-gray/50 rounded-lg border ${teamBorderColor} overflow-hidden`}>
@@ -108,10 +120,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
           {/* Champion Avatar */}
           <div className="flex-shrink-0">
             {player.champion && championImageUrl ? (
-              <img
+              <Image
                 src={championImageUrl}
                 alt={player.champion.name}
+                width={40}
+                height={40}
                 className="w-10 h-10 rounded border border-gray-500"
+                unoptimized={true}
               />
             ) : (
               <div className="w-10 h-10 border-2 border-dashed border-gray-500 rounded flex items-center justify-center text-gray-400 text-xs">
@@ -133,10 +148,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
             {[0, 1].map((slot) => (
               <div key={slot}>
                 {player.summonerSpells[slot as 0 | 1] && summonerSpellImageUrls[slot] ? (
-                  <img
+                  <Image
                     src={summonerSpellImageUrls[slot]}
                     alt={player.summonerSpells[slot as 0 | 1]!.name}
+                    width={24}
+                    height={24}
                     className="w-6 h-6 rounded border border-gray-500"
+                    unoptimized={true}
                   />
                 ) : (
                   <div className="w-6 h-6 border border-dashed border-gray-500 rounded bg-gray-700"></div>
@@ -224,10 +242,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
           <div>
             {player.champion && expandedChampionImageUrl ? (
               <div className="flex items-center gap-2 p-2 bg-riot-dark rounded border border-gray-500">
-                <img
+                <Image
                   src={expandedChampionImageUrl}
                   alt={player.champion.name}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded"
+                  unoptimized={true}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-white truncate">{player.champion.name}</div>
@@ -263,10 +284,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
               <div key={slot} className="flex-1">
                 {player.summonerSpells[slot as 0 | 1] && summonerSpellImageUrls[slot] ? (
                   <div className="relative">
-                    <img
+                    <Image
                       src={summonerSpellImageUrls[slot]}
                       alt={player.summonerSpells[slot as 0 | 1]!.name}
+                      width={64}
+                      height={64}
                       className="w-full aspect-square rounded border border-gray-500"
+                      unoptimized={true}
                     />
                     <button
                       onClick={(e) => {
@@ -300,10 +324,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
               <div key={itemSlot.id} className="aspect-square">
                 {itemSlot.item && itemImageUrls[itemSlot.id] ? (
                   <div className="relative group">
-                    <img
+                    <Image
                       src={itemImageUrls[itemSlot.id]}
                       alt={itemSlot.item.name}
+                      width={64}
+                      height={64}
                       className="w-full h-full rounded border border-gray-500"
+                      unoptimized={true}
                     />
                     <button
                       onClick={(e) => {
@@ -337,10 +364,13 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, team, forceExpanded }) 
             <div className="text-xs text-gray-400 mb-1">Boots</div>
             {player.items[6]?.item && itemImageUrls[6] ? (
               <div className="relative inline-block">
-                <img
+                <Image
                   src={itemImageUrls[6]}
                   alt={player.items[6].item.name}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded border border-gray-500"
+                  unoptimized={true}
                 />
                 <button
                   onClick={(e) => {

@@ -80,7 +80,7 @@ export interface ChampionDetail {
   stats: ChampionStats;
   spells: ChampionSpell[];
   passive: ChampionPassive;
-  recommended: any[];
+  recommended: Record<string, unknown>[];
 }
 
 export interface ChampionSkin {
@@ -104,10 +104,14 @@ export interface ChampionSpell {
   cooldownBurn: string;
   cost: number[];
   costBurn: string;
-  datavalues: any;
+  datavalues: Record<string, unknown>;
   effect: (number[] | null)[];
   effectBurn: (string | null)[];
-  vars: any[];
+  vars: Array<{
+    key: string;
+    link: string;
+    coeff: number[];
+  }>;
   costType: string;
   maxammo: string;
   range: number[];

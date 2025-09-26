@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { SkinSelectionProvider } from '@/contexts/SkinSelectionContext'
 import { ChampionInfoProvider } from '@/contexts/ChampionInfoContext'
 import { TeamProvider } from '@/contexts/TeamContext'
@@ -8,12 +8,13 @@ export const metadata: Metadata = {
   title: 'LoL Champion Guide',
   description: 'Complete League of Legends champion reference guide with abilities, skins, and more',
   manifest: '/manifest.json',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: '#010A13',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
 }
 
 export default function RootLayout({

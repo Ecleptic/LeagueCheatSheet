@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ChampionSummary } from '@/types/champion';
 import { riotApi } from '@/lib/riot-api';
 import { useChampionInfo } from '@/contexts/ChampionInfoContext';
@@ -67,11 +68,14 @@ const ChampionCard: React.FC<ChampionCardProps> = ({
       onClick={() => onClick(champion)}
     >
       {championImageUrl ? (
-        <img
+        <Image
           src={championImageUrl}
           alt={champion.name}
+          width={48}
+          height={48}
           className="w-12 h-12 rounded"
-          loading="lazy"
+          priority={false}
+          unoptimized={true}
         />
       ) : (
         <div className="w-12 h-12 rounded bg-gray-700 flex items-center justify-center">

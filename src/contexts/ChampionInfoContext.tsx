@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 
 interface ChampionInfo {
   playerName?: string;
@@ -52,11 +52,11 @@ export const ChampionInfoProvider: React.FC<ChampionInfoProviderProps> = ({ chil
     }
   }, [championInfos]);
 
-  const getChampionInfo = (championId: string): ChampionInfo => {
+  const getChampionInfo = useCallback((championId: string): ChampionInfo => {
     return championInfos[championId] || {};
-  };
+  }, [championInfos]);
 
-  const setPlayerName = (championId: string, playerName: string) => {
+  const setPlayerName = useCallback((championId: string, playerName: string) => {
     setChampionInfos(prev => ({
       ...prev,
       [championId]: {
@@ -64,9 +64,9 @@ export const ChampionInfoProvider: React.FC<ChampionInfoProviderProps> = ({ chil
         playerName: playerName.trim() || undefined
       }
     }));
-  };
+  }, []);
 
-  const setNotes = (championId: string, notes: string) => {
+  const setNotes = useCallback((championId: string, notes: string) => {
     setChampionInfos(prev => ({
       ...prev,
       [championId]: {
@@ -74,22 +74,22 @@ export const ChampionInfoProvider: React.FC<ChampionInfoProviderProps> = ({ chil
         notes: notes.trim() || undefined
       }
     }));
-  };
+  }, []);
 
-  const clearChampionInfo = (championId: string) => {
+  const clearChampionInfo = useCallback((championId: string) => {
     setChampionInfos(prev => {
       const newInfos = { ...prev };
       delete newInfos[championId];
       return newInfos;
     });
-  };
+  }, []);
 
   const contextValue = useMemo(() => ({
     getChampionInfo,
     setPlayerName,
     setNotes,
     clearChampionInfo
-  }), [championInfos]);
+  }), [getChampionInfo, setPlayerName, setNotes, clearChampionInfo]);
 
   return (
     <ChampionInfoContext.Provider value={contextValue}>

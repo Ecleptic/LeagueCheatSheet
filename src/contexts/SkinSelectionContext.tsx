@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 interface SkinSelection {
   [championId: string]: number; // championId -> skin number
@@ -41,22 +41,22 @@ export const SkinSelectionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [selectedSkins]);
 
-  const setSelectedSkin = (championId: string, skinNum: number) => {
+  const setSelectedSkin = useCallback((championId: string, skinNum: number) => {
     setSelectedSkins(prev => ({
       ...prev,
       [championId]: skinNum
     }));
-  };
+  }, []);
 
-  const getSelectedSkin = (championId: string): number => {
+  const getSelectedSkin = useCallback((championId: string): number => {
     return selectedSkins[championId] ?? 0; // Default to skin 0 (classic)
-  };
+  }, [selectedSkins]);
 
   const contextValue = useMemo(() => ({
     selectedSkins,
     setSelectedSkin,
     getSelectedSkin
-  }), [selectedSkins]);
+  }), [selectedSkins, setSelectedSkin, getSelectedSkin]);
 
   return (
     <SkinSelectionContext.Provider value={contextValue}>

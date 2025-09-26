@@ -1,18 +1,23 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { riotApi } from '@/lib/riot-api';
 
 interface SummonerSpellImageProps {
   spellImageFull: string;
   alt: string;
   className?: string;
+  width?: number;
+  height?: number;
 }
 
 const SummonerSpellImage: React.FC<SummonerSpellImageProps> = ({
   spellImageFull,
   alt,
-  className = ''
+  className = '',
+  width = 64,
+  height = 64
 }) => {
   const [imageUrl, setImageUrl] = useState<string>('');
 
@@ -29,10 +34,14 @@ const SummonerSpellImage: React.FC<SummonerSpellImageProps> = ({
   }
 
   return (
-    <img
+    <Image
       src={imageUrl}
       alt={alt}
+      width={width}
+      height={height}
       className={className}
+      priority={false}
+      unoptimized={true}
     />
   );
 };

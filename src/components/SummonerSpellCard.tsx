@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { SummonerSpellSummary } from '@/types/summonerSpell';
 import { riotApi } from '@/lib/riot-api';
 
@@ -32,11 +33,14 @@ const SummonerSpellCard: React.FC<SummonerSpellCardProps> = ({
       <div className="flex items-center space-x-3">
         <div className="relative">
           {spellImageUrl ? (
-            <img
+            <Image
               src={spellImageUrl}
               alt={summonerSpell.name}
+              width={48}
+              height={48}
               className="w-12 h-12 rounded border border-gray-600"
-              loading="lazy"
+              priority={false}
+              unoptimized={true}
             />
           ) : (
             <div className="w-12 h-12 rounded border border-gray-600 bg-gray-700 flex items-center justify-center">

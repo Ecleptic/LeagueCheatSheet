@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { ChampionSummary, ChampionDetail } from '@/types/champion';
 import { riotApi } from '@/lib/riot-api';
 import { useSkinSelection } from '@/contexts/SkinSelectionContext';
@@ -141,22 +142,22 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
   });
 
   useEffect(() => {
+    const fetchChampionDetail = async () => {
+      try {
+        setLoading(true);
+        const response = await riotApi.getChampionDetail(champion.id);
+        setChampionDetail(response.data[champion.id]);
+      } catch (error) {
+        console.error('Error fetching champion detail:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isOpen && champion) {
       fetchChampionDetail();
     }
   }, [isOpen, champion]);
-
-  const fetchChampionDetail = async () => {
-    try {
-      setLoading(true);
-      const response = await riotApi.getChampionDetail(champion.id);
-      setChampionDetail(response.data[champion.id]);
-    } catch (error) {
-      console.error('Error fetching champion detail:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFavoriteClick = () => {
     onToggleFavorite(champion.id);
@@ -193,11 +194,14 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
       <div className="h-full">
         {/* Hero Header */}
         <div className="bg-gradient-to-r from-red-900 to-red-700 relative min-h-[60vh]">
-          <img
+          <Image
             src={splashUrl}
             alt={`${champion.name} splash art`}
+            width={1920}
+            height={1080}
             className="w-full h-full min-h-[60vh] object-cover object-center opacity-80"
-            loading="lazy"
+            priority={true}
+            unoptimized={true}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
           
@@ -421,11 +425,13 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
                              "Loading Screen",
                              `${champion.name} - Loading Screen`
                            )}>
-                        <img
+                        <Image
                           src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champion.id}_${selectedSkinNum}.jpg`}
                           alt="Loading Screen"
+                          width={308}
+                          height={560}
                           className="w-full h-32 object-cover"
-                          loading="lazy"
+                          unoptimized={true}
                         />
                         <div className="p-2">
                           <p className="text-xs text-gray-400 text-center">Loading Screen</p>
@@ -578,11 +584,13 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
                     >
                       {/* Main Splash Art */}
                       <div className="relative">
-                        <img
+                        <Image
                           src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champion.id}_${skin.num}.jpg`}
                           alt={skin.name}
+                          width={1215}
+                          height={717}
                           className="w-full h-48 object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                          loading="lazy"
+                          unoptimized={true}
                           onClick={() => {
                             openImageModal(
                               `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champion.id}_${skin.num}.jpg`,
@@ -656,11 +664,13 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
                                    `${champion.name} - ${skin.name === 'default' ? 'Classic' : skin.name} Loading Screen`
                                  );
                                }}>
-                            <img
+                            <Image
                               src={`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champion.id}_${skin.num}.jpg`}
                               alt={`${skin.name} loading screen`}
+                              width={308}
+                              height={560}
                               className="w-full h-32 object-cover"
-                              loading="lazy"
+                              unoptimized={true}
                             />
                             <div className="p-2">
                               <p className="text-xs text-gray-400 text-center">Loading Screen</p>
@@ -675,11 +685,13 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
                                    `${champion.name} - ${skin.name === 'default' ? 'Classic' : skin.name} Portrait`
                                  );
                                }}>
-                            <img
+                            <Image
                               src={`https://ddragon.leagueoflegends.com/cdn/img/champion/centered/${champion.id}_${skin.num}.jpg`}
                               alt={`${skin.name} centered`}
+                              width={400}
+                              height={400}
                               className="w-full h-32 object-cover"
-                              loading="lazy"
+                              unoptimized={true}
                               onError={(e) => {
                                 // Fallback to splash if centered doesn't exist
                                 e.currentTarget.src = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champion.id}_${skin.num}.jpg`;

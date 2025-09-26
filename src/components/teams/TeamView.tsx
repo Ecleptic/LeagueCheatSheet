@@ -8,6 +8,13 @@ import InputModal from '../modals/InputModal';
 import ConfigurationSelectModal from '../modals/ConfigurationSelectModal';
 import ToastContainer, { Toast } from '../ToastContainer';
 
+interface SavedConfiguration {
+  name: string;
+  gameState: Record<string, unknown>;
+  builderState: Record<string, unknown>;
+  savedAt: string;
+}
+
 const TeamView: React.FC = () => {
   const { gameState, dispatch } = useTeam();
   
@@ -20,7 +27,7 @@ const TeamView: React.FC = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   
   // Saved configurations
-  const [savedConfigs, setSavedConfigs] = useState<Record<string, any>>({});
+  const [savedConfigs, setSavedConfigs] = useState<Record<string, SavedConfiguration>>({});
   
   // Reset key to force MultiStepTeamBuilder remount
   const [resetKey, setResetKey] = useState(0);

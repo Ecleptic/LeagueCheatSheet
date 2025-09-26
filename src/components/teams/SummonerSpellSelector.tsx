@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { SummonerSpell } from '@/types/summonerSpell';
+import { SummonerSpell, SummonerSpellSummary } from '@/types/summonerSpell';
 import { useSummonerSpells } from '@/hooks/useSummonerSpells';
 import { usePlayerActions } from '@/hooks/useTeamActions';
 import SummonerSpellImage from '@/components/ui/SummonerSpellImage';
@@ -29,7 +29,7 @@ const SummonerSpellSelector: React.FC<SummonerSpellSelectorProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
 
   // Convert SummonerSpellSummary to SummonerSpell for team actions
-  const convertToFullSpell = (summarySpell: any): SummonerSpell => {
+  const convertToFullSpell = (summarySpell: SummonerSpellSummary): SummonerSpell => {
     // Create a minimal SummonerSpell that satisfies the interface
     return {
       id: summarySpell.id,
@@ -89,13 +89,13 @@ const SummonerSpellSelector: React.FC<SummonerSpellSelectorProps> = ({
     });
   }, [summonerSpells]);
 
-  const handleSpellSelect = (spell: any) => {
+  const handleSpellSelect = (spell: SummonerSpellSummary) => {
     const fullSpell = convertToFullSpell(spell);
     playerActions.setSummonerSpell(spellSlot, fullSpell);
     onClose();
   };
 
-  const handleSpellClick = (spell: any) => {
+  const handleSpellClick = (spell: SummonerSpellSummary) => {
     handleSpellSelect(spell);
   };
 

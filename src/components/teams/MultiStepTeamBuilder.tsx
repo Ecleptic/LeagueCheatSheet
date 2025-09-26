@@ -1,16 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTeam } from '@/contexts/TeamContext';
 import { TeamBuilderStep, Position, createDefaultTeamBuilderState, TeamBuilderState } from '@/types/team';
 import PositionIcon, { getAllPositions } from '@/components/PositionIcon';
-import { ChampionSummary } from '@/types/champion';
 import ChampionImage from '@/components/ui/ChampionImage';
-import { SummonerSpell } from '@/types/summonerSpell';
 import SummonerSpellImage from '@/components/ui/SummonerSpellImage';
 import ChampionSelector from './ChampionSelector';
 import SummonerSpellSelector from './SummonerSpellSelector';
-import SummonerSpellModal from '@/components/modals/SummonerSpellModal';
 
 interface MultiStepTeamBuilderProps {
   className?: string;
@@ -65,7 +62,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
   });
 
   // Check if current step is complete
-  const isStepComplete = (step: TeamBuilderStep): boolean => {
+  const isStepComplete = useCallback((step: TeamBuilderStep): boolean => {
     switch (step) {
       case 'team-names':
         return blueTeamName.trim() !== '' && redTeamName.trim() !== '';
@@ -83,7 +80,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
       default:
         return false;
     }
-  };
+  }, [blueTeamName, redTeamName, gameState]);
 
   // Update completed steps without automatic progression
   useEffect(() => {
@@ -101,7 +98,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
       ...prev,
       completedSteps
     }));
-  }, [blueTeamName, redTeamName, gameState, isInitialized]);
+  }, [blueTeamName, redTeamName, gameState, isInitialized, isStepComplete]);
 
   // Handle team name changes
   const handleTeamNameChange = (team: 'blue' | 'red', name: string) => {
@@ -404,7 +401,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-blue-400">{blueTeamName} - Champions</h3>
               <div className="space-y-3">
-                {gameState.blueTeam.players.map((player, index) => (
+                {gameState.blueTeam.players.map((player) => (
                   <div 
                     key={player.id} 
                     className="flex items-center space-x-3 p-4 bg-blue-900/30 border-2 border-dashed border-blue-500/30 hover:border-blue-400 rounded-lg transition-colors"
@@ -456,7 +453,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-red-400">{redTeamName} - Champions</h3>
               <div className="space-y-3">
-                {gameState.redTeam.players.map((player, index) => (
+                {gameState.redTeam.players.map((player) => (
                   <div 
                     key={player.id} 
                     className="flex items-center space-x-3 p-4 bg-red-900/30 border-2 border-dashed border-red-500/30 hover:border-red-400 rounded-lg transition-colors"
@@ -555,7 +552,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-blue-400">{blueTeamName} - Summoner Spells</h3>
               <div className="space-y-3">
-                {gameState.blueTeam.players.map((player, index) => (
+                {gameState.blueTeam.players.map((player) => (
                   <div key={player.id} className="flex items-center space-x-3 p-4 bg-blue-900/30 rounded-lg border border-blue-500/30">
                     <div className="w-6 h-6">
                       {player.position && (
@@ -616,7 +613,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-red-400">{redTeamName} - Summoner Spells</h3>
               <div className="space-y-3">
-                {gameState.redTeam.players.map((player, index) => (
+                {gameState.redTeam.players.map((player) => (
                   <div key={player.id} className="flex items-center space-x-3 p-4 bg-red-900/30 rounded-lg border border-red-500/30">
                     <div className="w-6 h-6">
                       {player.position && (
@@ -782,7 +779,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
       {/* Progress Indicator */}
       <div className="mt-8 pt-4 border-t border-gray-700">
         <div className="flex justify-center space-x-2">
-          {(['team-names', 'player-setup', 'champion-selection', 'summoner-spells', 'complete'] as TeamBuilderStep[]).map((step, index) => (
+          {(['team-names', 'player-setup', 'champion-selection', 'summoner-spells', 'complete'] as TeamBuilderStep[]).map((step) => (
             <div
               key={step}
               className={`w-3 h-3 rounded-full ${

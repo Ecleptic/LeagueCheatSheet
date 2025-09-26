@@ -69,8 +69,8 @@ class RiotApiService {
     if (cachedData) {
       try {
         return JSON.parse(cachedData);
-      } catch (error) {
-        console.warn('Failed to parse cached champions data');
+      } catch (err) {
+        console.warn('Failed to parse cached champions data:', err);
       }
     }
 
@@ -104,8 +104,8 @@ class RiotApiService {
     if (cachedData) {
       try {
         return JSON.parse(cachedData);
-      } catch (error) {
-        console.warn(`Failed to parse cached data for champion ${championId}`);
+      } catch (err) {
+        console.warn(`Failed to parse cached data for champion ${championId}:`, err);
       }
     }
 
@@ -139,8 +139,8 @@ class RiotApiService {
     if (cachedData) {
       try {
         return JSON.parse(cachedData);
-      } catch (error) {
-        console.warn('Failed to parse cached items data');
+      } catch (err) {
+        console.warn('Failed to parse cached items data:', err);
       }
     }
 
@@ -232,8 +232,8 @@ class RiotApiService {
         if (now - parsedData.timestamp < CACHE_DURATION) {
           return parsedData.data;
         }
-      } catch (error) {
-        console.warn('Failed to parse cached summoner spells data');
+      } catch (err) {
+        console.warn('Failed to parse cached summoner spells data:', err);
       }
     }
 
@@ -251,8 +251,8 @@ class RiotApiService {
         data: summonerSpells,
         timestamp: now
       }));
-    } catch (error) {
-      console.warn('Failed to cache summoner spells data');
+    } catch (err) {
+      console.warn('Failed to cache summoner spells data:', err);
     }
 
     return summonerSpells;

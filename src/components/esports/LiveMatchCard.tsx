@@ -1,12 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Match } from '@/lib/esports/api';
 import { getLeagueIcon, ESPORTS_CONFIG } from '@/lib/esports/config';
 import LiveGameStats from './LiveGameStats';
 
 interface LiveMatchCardProps {
   match: Match;
+}
+
+interface StreamData {
+  mediaLocale: {
+    englishName: string;
+    translatedName: string;
+  };
+  provider: string;
 }
 
 const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
@@ -38,11 +47,11 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
   const stateInfo = getStateDisplay(match.state);
 
   // Extract additional data that might be available
-  const rawMatch = match as any;
-  const league = rawMatch.league;
-  const streams = rawMatch.streams || [];
-  const flags = rawMatch.match?.flags || [];
-  const tournament = rawMatch.tournament;
+  const rawMatch = match as Match & Record<string, unknown>;
+  const league = rawMatch.league as { name?: string; slug?: string; image?: string } | undefined;
+  const streams = (rawMatch.streams || []) as unknown[];
+  const flags = (rawMatch.match as { flags?: unknown[] })?.flags || [];
+  // Note: tournament data available but not used in current component
   const liveGameStats = rawMatch.liveGameStats;
   const currentGame = rawMatch.currentGame;
 
@@ -114,15 +123,18 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
         </div>
 
         {/* League Info */}
-        {league && (
+        {league && league.name && (
           <div className="flex items-center space-x-2 mt-2">
             {(league.image || getLeagueIcon(league.name)) ? (
-              <img 
-                src={league.image || getLeagueIcon(league.name)} 
+              <Image
+                src={league.image || getLeagueIcon(league.name) || ''} 
                 alt={league.name} 
+                width={20}
+                height={20}
                 className="w-5 h-5 rounded"
+                unoptimized={true}
                 onError={(e) => { 
-                  const fallback = getLeagueIcon(league.name);
+                  const fallback = getLeagueIcon(league.name || '');
                   if (fallback && e.currentTarget.src !== fallback) {
                     e.currentTarget.src = fallback;
                   } else {
@@ -137,7 +149,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
                 </span>
               </div>
             )}
-            <span className="text-sm text-gray-300">{league.name}</span>
+            <span className="text-sm text-gray-300">{league?.name || ''}</span>
             {flags.includes('hasVod') && (
               <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded">
                 📺 VOD Available
@@ -164,7 +176,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
               </button>
             </div>
             <div className="flex flex-wrap gap-1">
-              {streams.slice(0, ESPORTS_CONFIG.MAX_VISIBLE_STREAMS).map((stream: any, index: number) => (
+              {(streams as StreamData[]).slice(0, ESPORTS_CONFIG.MAX_VISIBLE_STREAMS).map((stream: StreamData, index: number) => (
                 <span 
                   key={index}
                   className="text-xs bg-purple-900/20 text-purple-300 px-2 py-1 rounded border border-purple-500/20"
@@ -207,10 +219,13 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
             {match.teams?.map((team, index) => (
               <div key={team.id || index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <img
+                  <Image
                     src={team.image}
                     alt={team.name}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full border border-gray-500"
+                    unoptimized={true}
                     onError={(e) => {
                       e.currentTarget.src = '/default-team-logo.png';
                     }}
@@ -267,9 +282,9 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
         {/* Live Game Stats */}
         {(liveGameStats && currentGame) || showDemo ? (
           <LiveGameStats 
-            gameStats={showDemo ? demoGameStats : liveGameStats} 
-            gameDetails={showDemo ? demoGameDetails : rawMatch.liveGameDetails}
-            currentGame={showDemo ? demoCurrentGame : currentGame} 
+            gameStats={showDemo ? demoGameStats : liveGameStats as unknown as Parameters<typeof LiveGameStats>[0]['gameStats']} 
+            gameDetails={showDemo ? demoGameDetails : rawMatch.liveGameDetails as unknown as Parameters<typeof LiveGameStats>[0]['gameDetails']}
+            currentGame={showDemo ? demoCurrentGame : currentGame as unknown as Parameters<typeof LiveGameStats>[0]['currentGame']} 
           />
         ) : null}
       </div>

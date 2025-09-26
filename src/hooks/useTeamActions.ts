@@ -6,7 +6,7 @@ import { ChampionSummary, Item } from '../types/champion';
 import { SummonerSpell } from '../types/summonerSpell';
 
 export const useTeamActions = () => {
-  const { gameState, dispatch } = useTeam();
+  const { dispatch } = useTeam(); // gameState available from context if needed
 
   const actions = {
     // Game state actions

@@ -259,7 +259,7 @@ export const analyzeBuild = (
 /**
  * Cache for build calculations to improve performance
  */
-const buildCache = new Map<string, any>();
+const buildCache = new Map<string, { data: BuildAnalysis; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const getCachedBuildAnalysis = (

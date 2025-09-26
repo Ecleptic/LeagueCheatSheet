@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { riotApi } from '@/lib/riot-api';
 
 interface ItemImageProps {
@@ -8,13 +9,17 @@ interface ItemImageProps {
   itemName?: string;
   alt: string;
   className?: string;
+  width?: number;
+  height?: number;
 }
 
 const ItemImage: React.FC<ItemImageProps> = ({
   itemImageFull,
   itemName,
   alt,
-  className = ''
+  className = '',
+  width = 64,
+  height = 64
 }) => {
   const [imageUrl, setImageUrl] = useState<string>('');
 
@@ -34,10 +39,14 @@ const ItemImage: React.FC<ItemImageProps> = ({
   }
 
   return (
-    <img
+    <Image
       src={imageUrl}
       alt={alt}
+      width={width}
+      height={height}
       className={className}
+      priority={false}
+      unoptimized={true}
     />
   );
 };

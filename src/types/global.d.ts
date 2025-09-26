@@ -4,6 +4,6 @@
 // Ensure JSX intrinsic elements are available
 declare namespace JSX {
   interface IntrinsicElements {
-    [elemName: string]: any;
+    [elemName: string]: Record<string, unknown>;
   }
 }

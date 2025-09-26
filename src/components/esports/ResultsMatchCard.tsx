@@ -1,10 +1,21 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Match } from '@/lib/esports/api';
 
 interface ResultsMatchCardProps {
   match: Match;
+}
+
+interface ExtendedMatch extends Match {
+  league?: {
+    name?: string;
+    image?: string;
+  };
+  match?: {
+    flags?: string[];
+  };
 }
 
 const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
@@ -76,7 +87,7 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
   const timeInfo = formatMatchTime(match.startTime);
   
   // Extract additional data
-  const rawMatch = match as any;
+  const rawMatch = match as ExtendedMatch;
   const league = rawMatch.league;
   const flags = rawMatch.match?.flags || [];
 
@@ -97,16 +108,19 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
         </div>
 
         {/* League Info */}
-        {league && (
+        {league && league.name && (
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center space-x-2">
               {(league.image || getLeagueIcon(league.name)) ? (
-                <img 
-                  src={league.image || getLeagueIcon(league.name)} 
+                <Image
+                  src={league.image || getLeagueIcon(league.name) || ''} 
                   alt={league.name} 
+                  width={20}
+                  height={20}
                   className="w-5 h-5 rounded"
+                  unoptimized={true}
                   onError={(e) => { 
-                    const fallback = getLeagueIcon(league.name);
+                    const fallback = getLeagueIcon(league.name || '');
                     if (fallback && e.currentTarget.src !== fallback) {
                       e.currentTarget.src = fallback;
                     } else {
@@ -117,7 +131,7 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
               ) : (
                 <div className="w-5 h-5 rounded bg-gray-600 flex items-center justify-center">
                   <span className="text-xs text-gray-300 font-bold">
-                    {league.name.split(' ').map((word: string) => word[0]).join('').slice(0, 2)}
+                    {league.name?.split(' ').map((word: string) => word[0]).join('').slice(0, 2)}
                   </span>
                 </div>
               )}
@@ -146,10 +160,13 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
             {match.teams.map((team, index) => (
               <div key={team.id || index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <img
+                  <Image
                     src={team.image}
                     alt={team.name}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full border border-gray-500"
+                    unoptimized={true}
                     onError={(e) => {
                       e.currentTarget.src = '/default-team-logo.png';
                     }}

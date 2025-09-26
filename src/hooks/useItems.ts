@@ -40,7 +40,10 @@ export function useItems() {
       
       // Convert the items object to an array and filter out non-purchasable items
       const itemsArray: ItemSummary[] = Object.entries(itemsResponse.data)
-        .filter(([_, item]) => item.gold.purchasable && item.maps['11']) // Only SR items that can be purchased
+            .filter(([, item]: [string, Item]) => {
+              // Filter condition if needed
+              return item && item.gold;
+            })
         .map(([id, item]: [string, Item]) => ({
           id,
           name: item.name,

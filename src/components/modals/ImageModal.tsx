@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -55,11 +56,13 @@ const ImageModal: React.FC<ImageModalProps> = ({
 
         {/* Image Container */}
         <div className="flex-1 flex items-center justify-center bg-black/40 backdrop-blur-sm rounded-b-lg overflow-hidden">
-          <img
+          <Image
             src={imageUrl}
             alt={imageAlt}
+            width={800}
+            height={600}
             className="max-w-full max-h-full object-contain"
-            loading="lazy"
+            unoptimized={true}
           />
         </div>
 

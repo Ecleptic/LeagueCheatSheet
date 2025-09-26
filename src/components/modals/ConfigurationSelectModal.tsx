@@ -4,8 +4,8 @@ import React from 'react';
 
 interface SavedConfiguration {
   name: string;
-  gameState: any;
-  builderState: any;
+  gameState: Record<string, unknown>;
+  builderState: Record<string, unknown>;
   savedAt: string;
 }
 
@@ -41,10 +41,15 @@ const ConfigurationSelectModal: React.FC<ConfigurationSelectModalProps> = ({
   };
 
   const getConfigPreview = (config: SavedConfiguration) => {
-    const blueTeam = config.gameState?.blueTeam?.name || 'Blue Team';
-    const redTeam = config.gameState?.redTeam?.name || 'Red Team';
-    const playersCount = (config.gameState?.blueTeam?.players?.length || 0) + 
-                        (config.gameState?.redTeam?.players?.length || 0);
+    const gameState = config.gameState as {
+      blueTeam?: { name?: string; players?: unknown[] };
+      redTeam?: { name?: string; players?: unknown[] };
+    };
+    
+    const blueTeam = gameState?.blueTeam?.name || 'Blue Team';
+    const redTeam = gameState?.redTeam?.name || 'Red Team';
+    const playersCount = (gameState?.blueTeam?.players?.length || 0) + 
+                        (gameState?.redTeam?.players?.length || 0);
     
     return `${blueTeam} vs ${redTeam} • ${playersCount} players`;
   };

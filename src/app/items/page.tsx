@@ -41,7 +41,7 @@ export default function ItemsPage() {
             <div className="text-6xl mb-4">⚔️</div>
             <h2 className="text-xl font-bold mb-2">Items Coming Soon</h2>
             <p className="text-gray-400 mb-6">
-              We're working on bringing you a comprehensive items database.
+              We&apos;re working on bringing you a comprehensive items database.
             </p>
             <div className="bg-riot-gray rounded-lg p-4">
               <h3 className="font-semibold mb-2 text-riot-blue">Planned Features:</h3>

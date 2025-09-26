@@ -21,7 +21,6 @@ import SummonerSpellModal from '@/components/modals/SummonerSpellModal';
 import ItemCard from '@/components/ItemCard';
 import ItemModal from '@/components/modals/ItemModal';
 import PositionIcon from '@/components/PositionIcon';
-import { riotApi } from '@/lib/riot-api';
 
 export default function ChampionsPage() {
   const { champions, loading, error, refreshChampions } = useChampions();
@@ -338,7 +337,7 @@ export default function ChampionsPage() {
 
               {filteredChampions.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-gray-400">No champions found matching "{searchTerm}"</p>
+                  <p className="text-gray-400">No champions found matching &quot;{searchTerm}&quot;</p>
                 </div>
               )}
             </section>
@@ -365,7 +364,7 @@ export default function ChampionsPage() {
 
               {filteredSummonerSpells.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-gray-400">No summoner spells found matching "{searchTerm}"</p>
+                  <p className="text-gray-400">No summoner spells found matching &quot;{searchTerm}&quot;</p>
                 </div>
               )}
             </section>
@@ -392,7 +391,7 @@ export default function ChampionsPage() {
 
               {filteredItems.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-gray-400">No items found matching "{searchTerm}"</p>
+                  <p className="text-gray-400">No items found matching &quot;{searchTerm}&quot;</p>
                 </div>
               )}
             </section>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { GameState, Team, Player, Position, createDefaultGameState } from '../types/team';
+import { GameState, Position, createDefaultGameState } from '../types/team';
 import { ChampionSummary, Item } from '../types/champion';
 import { SummonerSpell } from '../types/summonerSpell';
 

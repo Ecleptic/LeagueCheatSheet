@@ -29,8 +29,8 @@ class CommunityDragonService {
         if (now - parsedData.timestamp < CACHE_DURATION) {
           return parsedData.data;
         }
-      } catch (error) {
-        console.warn('Failed to parse cached Community Dragon data');
+      } catch (err) {
+        console.warn('Failed to parse cached Community Dragon data:', err);
       }
     }
 
@@ -66,8 +66,8 @@ class CommunityDragonService {
           data: positions,
           timestamp: now
         }));
-      } catch (error) {
-        console.warn('Failed to cache Community Dragon positions data');
+      } catch (err) {
+        console.warn('Failed to cache Community Dragon positions data:', err);
       }
 
       return positions;

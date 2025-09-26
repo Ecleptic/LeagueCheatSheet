@@ -14,7 +14,7 @@ export function useEsportsLeagues() {
       try {
         setLoading(true);
         const data = await esportsApi.getAllLeagues();
-        setLeagues(data);
+        setLeagues(data as unknown as League[]);
         setError(null);
       } catch (err) {
         console.error('Failed to fetch leagues:', err);
@@ -72,7 +72,7 @@ export function useEsportsSchedule(leagueNames?: string[]) {
       return [];
     }
     return [...leagueNames].sort(); // Sort to ensure consistent reference
-  }, [leagueNames ? leagueNames.join(',') : '']);
+  }, [leagueNames]);
 
   useEffect(() => {
     async function fetchSchedule() {

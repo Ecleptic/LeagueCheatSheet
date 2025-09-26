@@ -45,7 +45,7 @@ export default function EsportsPage() {
             ].map((section) => (
               <button
                 key={section.id}
-                onClick={() => setActiveSection(section.id as any)}
+                onClick={() => setActiveSection(section.id as 'live' | 'schedule' | 'results' | 'standings')}
                 className={`py-4 px-2 border-b-2 transition-colors ${
                   activeSection === section.id
                     ? 'border-riot-blue text-white'
