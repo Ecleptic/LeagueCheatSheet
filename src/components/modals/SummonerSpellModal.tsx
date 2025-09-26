@@ -26,9 +26,16 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
       try {
         setLoading(true);
         const response = await riotApi.getSummonerSpells();
-        setSummonerSpellDetail(response.data[summonerSpell.id]);
+        const spellDetail = response.data[summonerSpell.id];
+        if (spellDetail) {
+          setSummonerSpellDetail(spellDetail);
+        } else {
+          console.warn(`Spell detail not found for ${summonerSpell.id} (${summonerSpell.name})`);
+          setSummonerSpellDetail(null);
+        }
       } catch (error) {
         console.error('Error fetching summoner spell detail:', error);
+        setSummonerSpellDetail(null);
       } finally {
         setLoading(false);
       }
@@ -43,9 +50,14 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
   
   useEffect(() => {
     if (summonerSpell && isOpen) {
-      riotApi.getSummonerSpellImageUrl(summonerSpell.image.full).then(url => {
-        setSpellImageUrl(url);
-      });
+      riotApi.getSummonerSpellImageUrl(summonerSpell.image.full)
+        .then(url => {
+          setSpellImageUrl(url);
+        })
+        .catch(error => {
+          console.error('Error loading summoner spell image:', error);
+          setSpellImageUrl('');
+        });
     }
   }, [summonerSpell, isOpen]);
 
@@ -57,8 +69,36 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
 
   if (!isOpen || !summonerSpell) return null;
   
-  // Clean HTML from descriptions
-  const cleanDescription = (text: string) => text.replace(/<[^>]*>/g, '');
+  // Enhanced function to clean HTML and template variables from descriptions
+  const cleanDescription = (text: string) => {
+    return text
+      // Remove HTML tags like <keywordMajor>, <moveSpeed>, etc.
+      .replace(/<[^>]*>/g, '')
+      // Replace template variables with readable text
+      .replace(/\{\{\s*([^}]+)\s*\}\}/g, (match, variable) => {
+        // Handle common template variables
+        if (variable.includes('basems') || variable.includes('movespeed')) return '[Movement Speed]';
+        if (variable.includes('duration')) return '[Duration]';
+        if (variable.includes('cooldown')) return '[Cooldown]';
+        if (variable.includes('damage')) return '[Damage]';
+        if (variable.includes('heal')) return '[Healing]';
+        if (variable.includes('shield')) return '[Shield]';
+        if (variable.includes('range')) return '[Range]';
+        if (variable.includes('bonusmsperenemybehind')) return '[Bonus Speed per Enemy Behind]';
+        // For percentage calculations, try to show a reasonable value
+        if (variable.includes('*100')) {
+          const baseValue = variable.match(/(\d+)\s*\*\s*100/);
+          if (baseValue) return `${baseValue[1]}%`;
+        }
+        // For specific numeric values
+        if (variable.match(/^\s*\d+\s*$/)) return variable.trim();
+        // Default fallback for unhandled variables
+        return `[${variable.replace(/[_*]/g, ' ').trim()}]`;
+      })
+      // Clean up extra whitespace and line breaks
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
 
   return (
     <div 
@@ -83,15 +123,22 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
           {/* Spell Info - Compact Layout */}
           <div className="pt-16 pb-6 px-4">
             <div className="flex items-center space-x-4 mb-3">
-              <div className="relative">
-                <Image
-                  src={spellImageUrl}
-                  alt={summonerSpell.name}
-                  width={56}
-                  height={56}
-                  className="w-14 h-14 rounded-lg border-2 border-white/20 bg-black/20 backdrop-blur-sm"
-                  unoptimized={true}
-                />
+                            <div className="relative">
+                {spellImageUrl ? (
+                  <Image
+                    src={spellImageUrl}
+                    alt={summonerSpell.name}
+                    width={56}
+                    height={56}
+                    className="w-14 h-14 rounded-lg border-2 border-white/20 bg-black/20 backdrop-blur-sm"
+                    priority={false}
+                    unoptimized={true}
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-lg border-2 border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                    <span className="text-white text-xs">?</span>
+                  </div>
+                )}
                 <div className="absolute -bottom-1 -right-1 bg-riot-gold text-riot-dark rounded-full px-1.5 py-0.5 text-xs font-bold">
                   {summonerSpell.summonerLevel}
                 </div>
@@ -110,7 +157,12 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
               </span>
               {summonerSpell.modes.length > 0 && (
                 <span className="px-3 py-1 bg-gray-600/80 text-white text-sm rounded-full">
-                  {summonerSpell.modes.includes('CLASSIC') ? 'Summoner\'s Rift' : summonerSpell.modes.join(', ')}
+                  {summonerSpell.modes.includes('CLASSIC') 
+                    ? 'Summoner\'s Rift' 
+                    : summonerSpell.modes.includes('CHERRY')
+                    ? 'Arena'
+                    : summonerSpell.modes.join(', ')
+                  }
                 </span>
               )}
             </div>
@@ -165,7 +217,14 @@ const SummonerSpellModal: React.FC<SummonerSpellModalProps> = ({
                     <div>
                       <div className="text-xs text-gray-400 uppercase tracking-wide">Game Modes</div>
                       <div className="text-sm text-gray-300">
-                        {summonerSpellDetail.modes.includes('CLASSIC') ? 'All Game Modes' : summonerSpellDetail.modes.join(', ')}
+                        {summonerSpellDetail.modes.includes('CLASSIC') 
+                          ? 'All Game Modes' 
+                          : summonerSpellDetail.modes.includes('CHERRY')
+                          ? 'Arena Mode Only'
+                          : summonerSpellDetail.modes.map(mode => 
+                              mode === 'CHERRY' ? 'Arena' : mode
+                            ).join(', ')
+                        }
                       </div>
                     </div>
                   </div>

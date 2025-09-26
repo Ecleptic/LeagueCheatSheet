@@ -37,6 +37,19 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onClick }) => {
 
   const primaryStats = getPrimaryStats(item.stats);
 
+  // Clean HTML tags and special markup from descriptions
+  const cleanDescription = (text: string) => {
+    if (!text) return '';
+    return text
+      .replace(/<[^>]*>/g, '') // Remove all HTML tags including rarityLegendary, mainText, etc.
+      .replace(/&nbsp;/g, ' ') // Replace &nbsp; with spaces
+      .replace(/&amp;/g, '&') // Replace &amp; with &
+      .replace(/&lt;/g, '<') // Replace &lt; with <
+      .replace(/&gt;/g, '>') // Replace &gt; with >
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim();
+  };
+
   return (
     <button 
       onClick={handleClick}
@@ -47,7 +60,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onClick }) => {
         <div className="flex-shrink-0">
           <ItemImage
             itemImageFull={item.image.full}
-            alt={item.name}
+            alt={cleanDescription(item.name)}
             className="w-12 h-12 rounded border border-gray-600"
           />
         </div>
@@ -57,10 +70,10 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onClick }) => {
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-medium text-riot-gold truncate">
-                {item.name}
+                {cleanDescription(item.name)}
               </h3>
               <p className="text-xs text-gray-400 mb-1 line-clamp-2">
-                {item.plaintext || 'No description available'}
+                {cleanDescription(item.plaintext) || 'No description available'}
               </p>
               
               {/* Stats */}

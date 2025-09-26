@@ -257,7 +257,7 @@ export default function ChampionsPage() {
             
             {/* Position filters for champions */}
             {activeTab === 'champions' && (
-              <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+              <div className="flex flex-wrap gap-2 mt-3">
                 <button
                   onClick={() => setSelectedPosition('')}
                   className={`px-3 py-1 rounded-full text-xs whitespace-nowrap flex items-center gap-1 transition-colors ${

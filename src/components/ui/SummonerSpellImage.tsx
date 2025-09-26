@@ -20,16 +20,32 @@ const SummonerSpellImage: React.FC<SummonerSpellImageProps> = ({
   height = 64
 }) => {
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!spellImageFull) {
+      setLoading(false);
+      setImageUrl('');
+      return;
+    }
+
     riotApi.getSummonerSpellImageUrl(spellImageFull).then(url => {
       setImageUrl(url);
+      setLoading(false);
+    }).catch(() => {
+      setImageUrl('');
+      setLoading(false);
     });
   }, [spellImageFull]);
 
-  if (!imageUrl) {
+  if (loading || !imageUrl) {
     return (
-      <div className={`bg-gray-600 animate-pulse ${className}`} />
+      <div 
+        className={`bg-gray-600 animate-pulse flex items-center justify-center ${className}`}
+        style={{ width, height }}
+      >
+        <span className="text-xs text-gray-400">?</span>
+      </div>
     );
   }
 

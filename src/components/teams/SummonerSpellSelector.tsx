@@ -59,7 +59,7 @@ const SummonerSpellSelector: React.FC<SummonerSpellSelectorProps> = ({
 
   // Filter summoner spells based on search
   const filteredSpells = useMemo(() => {
-    return Object.values(summonerSpells).filter(spell => 
+    return summonerSpells.filter(spell => 
       spell.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       spell.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -82,7 +82,7 @@ const SummonerSpellSelector: React.FC<SummonerSpellSelectorProps> = ({
     return combinations.filter(combo => {
       // Only show combinations that include the spell we're looking for
       return combo.spells.some(spellName => 
-        Object.values(summonerSpells).some(spell => 
+        summonerSpells.some(spell => 
           spell.name === spellName
         )
       );
@@ -147,11 +147,11 @@ const SummonerSpellSelector: React.FC<SummonerSpellSelectorProps> = ({
                     <div className="text-sm font-medium text-white mb-2">{combo.name}</div>
                     <div className="flex gap-1">
                       {combo.spells.map((spellName) => {
-                        const spell = Object.values(summonerSpells).find(s => s.name === spellName);
+                        const spell = summonerSpells.find(s => s.name === spellName);
                         return spell ? (
                           <SummonerSpellImage
                             key={spell.id}
-                            spellImageFull={spell.image.full}
+                            spellImageFull={spell.image?.full || ''}
                             alt={spell.name}
                             className="w-8 h-8 rounded border border-gray-500"
                           />
@@ -179,7 +179,7 @@ const SummonerSpellSelector: React.FC<SummonerSpellSelectorProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <SummonerSpellImage
-                      spellImageFull={spell.image.full}
+                      spellImageFull={spell.image?.full || ''}
                       alt={spell.name}
                       className="w-12 h-12 rounded border border-gray-500"
                     />

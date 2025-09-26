@@ -30,6 +30,19 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
   const playerActions = usePlayerActions(team, playerId);
   
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Clean HTML tags and special markup from descriptions
+  const cleanDescription = (text: string) => {
+    if (!text) return '';
+    return text
+      .replace(/<[^>]*>/g, '') // Remove all HTML tags including rarityLegendary, mainText, etc.
+      .replace(/&nbsp;/g, ' ') // Replace &nbsp; with spaces
+      .replace(/&amp;/g, '&') // Replace &amp; with &
+      .replace(/&lt;/g, '<') // Replace &lt; with <
+      .replace(/&gt;/g, '>') // Replace &gt; with >
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim();
+  };
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   // Convert ItemSummary to Item for team actions
@@ -170,11 +183,11 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
                     <div className="flex flex-col items-center gap-2">
                       <ItemImage
                         itemImageFull={item.image.full}
-                        alt={item.name}
+                        alt={cleanDescription(item.name)}
                         className="w-12 h-12 rounded border border-gray-500"
                       />
                       <div className="text-xs font-medium text-white text-center line-clamp-2">
-                        {item.name}
+                        {cleanDescription(item.name)}
                       </div>
                       {item.gold && (
                         <div className="text-xs text-yellow-400">
@@ -204,11 +217,11 @@ const ItemSelector: React.FC<ItemSelectorProps> = ({
                   <div className="flex flex-col items-center gap-2">
                     <ItemImage
                       itemImageFull={item.image.full}
-                      alt={item.name}
+                      alt={cleanDescription(item.name)}
                       className="w-12 h-12 rounded border border-gray-500"
                     />
                     <div className="text-xs font-medium text-white text-center line-clamp-2">
-                      {item.name}
+                      {cleanDescription(item.name)}
                     </div>
                     {item.gold && (
                       <div className="text-xs text-yellow-400">

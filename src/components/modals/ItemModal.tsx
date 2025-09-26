@@ -107,11 +107,11 @@ const ItemModal: React.FC<ItemModalProps> = ({ item, isOpen, onClose }) => {
           <div className="flex items-center space-x-4">
             <ItemImage
               itemImageFull={item.image.full}
-              alt={item.name}
+              alt={cleanDescription(item.name)}
               className="w-16 h-16 rounded border-2 border-riot-gold"
             />
             <div>
-              <h1 className="text-2xl font-bold text-riot-gold">{item.name}</h1>
+              <h1 className="text-2xl font-bold text-riot-gold">{cleanDescription(item.name)}</h1>
               <div className="flex items-center space-x-4 mt-2">
                 <div className="text-lg font-semibold text-yellow-400">
                   🪙 {formatGold(item.gold.total)}
@@ -132,7 +132,7 @@ const ItemModal: React.FC<ItemModalProps> = ({ item, isOpen, onClose }) => {
           {item.plaintext && (
             <div>
               <h3 className="text-lg font-semibold text-riot-gold mb-2">Summary</h3>
-              <p className="text-gray-300">{item.plaintext}</p>
+              <p className="text-gray-300">{cleanDescription(item.plaintext)}</p>
             </div>
           )}
 
