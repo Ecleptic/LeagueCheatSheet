@@ -45,9 +45,6 @@ const TeamView: React.FC = () => {
     }
   };
 
-const TeamView: React.FC = () => {
-  const { gameState, dispatch } = useTeam();
-
   const handleSaveConfiguration = (configName: string) => {
     try {
       const configs = loadSavedConfigurations();

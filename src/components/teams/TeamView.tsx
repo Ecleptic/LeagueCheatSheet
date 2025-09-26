@@ -161,32 +161,33 @@ const TeamView: React.FC = () => {
                 <p className="text-gray-400 text-sm">Create and configure your League of Legends team compositions</p>
               </div>
               
-              <div className="flex flex-wrap gap-2">
+              {/* Configuration Controls */}
+              <div className="flex flex-wrap gap-3 sm:bg-riot-dark/50 sm:p-3 sm:rounded-lg sm:border sm:border-gray-700/50">
                 <button 
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm"
+                  className="group flex items-center gap-2 px-4 py-2 bg-riot-gray hover:bg-gray-700 border border-gray-600 hover:border-riot-blue text-gray-300 hover:text-riot-gold rounded-lg transition-all duration-200 font-medium text-sm"
                   onClick={openLoadModal}
                   title="Load a previously saved team configuration"
                 >
-                  <span className="text-base">📂</span>
-                  <span className="hidden sm:inline">Load</span>
+                  <span className="text-base opacity-75 group-hover:opacity-100 transition-opacity">📂</span>
+                  <span className="hidden sm:inline">Load Config</span>
                 </button>
                 
                 <button 
-                  className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium text-sm"
+                  className="group flex items-center gap-2 px-4 py-2 bg-riot-gray hover:bg-gray-700 border border-gray-600 hover:border-riot-gold text-gray-300 hover:text-riot-gold rounded-lg transition-all duration-200 font-medium text-sm"
                   onClick={() => setShowSaveModal(true)}
                   title="Save current team configuration"
                 >
-                  <span className="text-base">💾</span>
-                  <span className="hidden sm:inline">Save</span>
+                  <span className="text-base opacity-75 group-hover:opacity-100 transition-opacity">💾</span>
+                  <span className="hidden sm:inline">Save Config</span>
                 </button>
                 
                 <button 
-                  className="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium text-sm"
+                  className="group flex items-center gap-2 px-4 py-2 bg-riot-gray hover:bg-gray-700 border border-gray-600 hover:border-red-400 text-gray-300 hover:text-red-400 rounded-lg transition-all duration-200 font-medium text-sm"
                   onClick={() => setShowResetConfirm(true)}
                   title="Reset and start fresh"
                 >
-                  <span className="text-base">🔄</span>
-                  <span className="hidden sm:inline">Reset</span>
+                  <span className="text-base opacity-75 group-hover:opacity-100 transition-opacity">🔄</span>
+                  <span className="hidden sm:inline">Reset All</span>
                 </button>
               </div>
             </div>

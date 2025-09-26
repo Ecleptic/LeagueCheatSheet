@@ -19,9 +19,22 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
   const { gameState, dispatch } = useTeam();
   const [builderState, setBuilderState] = useState<TeamBuilderState>(createDefaultTeamBuilderState());
   
-  // Team names step - Start with empty names for the builder
+  // Team names step - Start with empty names for the builder, ensure they stay synchronized
   const [blueTeamName, setBlueTeamName] = useState('');
   const [redTeamName, setRedTeamName] = useState('');
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize team names from gameState if they exist, otherwise keep empty
+  useEffect(() => {
+    // Only sync if gameState has actual content (not default empty state)
+    if (gameState.blueTeam.name && gameState.blueTeam.name !== '') {
+      setBlueTeamName(gameState.blueTeam.name);
+    }
+    if (gameState.redTeam.name && gameState.redTeam.name !== '') {
+      setRedTeamName(gameState.redTeam.name);
+    }
+    setIsInitialized(true);
+  }, [gameState.blueTeam.name, gameState.redTeam.name]);
 
   // Modal states for champion and summoner spell selection
   const [championModal, setChampionModal] = useState<{
@@ -73,6 +86,9 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
 
   // Update current step based on completion
   useEffect(() => {
+    // Don't run step calculation until properly initialized
+    if (!isInitialized) return;
+    
     let currentStep: TeamBuilderStep = 'team-names';
     
     if (isStepComplete('team-names')) {
@@ -100,7 +116,7 @@ export default function MultiStepTeamBuilder({ className = '' }: MultiStepTeamBu
         ] as TeamBuilderStep[]
       }));
     }
-  }, [blueTeamName, redTeamName, gameState, builderState.currentStep]);
+  }, [blueTeamName, redTeamName, gameState, builderState.currentStep, isInitialized]);
 
   // Handle team name changes
   const handleTeamNameChange = (team: 'blue' | 'red', name: string) => {

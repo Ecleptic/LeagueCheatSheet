@@ -73,13 +73,12 @@ export const createEmptyPlayer = (id: string, name: string, position?: Position)
 
 // Helper function to create empty team
 export const createEmptyTeam = (color: 'blue' | 'red'): Team => {
-  const positions: Position[] = ['top', 'jungle', 'mid', 'bot', 'support'];
   return {
     id: `${color}-team-${Date.now()}`,
-    name: `${color.charAt(0).toUpperCase() + color.slice(1)} Team`,
+    name: '', // Start with empty team name for the builder
     color,
     players: Array.from({ length: 5 }, (_, i) => 
-      createEmptyPlayer(`${color}-player-${i}`, `Player ${i + 1}`, positions[i])
+      createEmptyPlayer(`${color}-player-${i}`, '', undefined) // Start with empty names and no positions
     )
   };
 };
