@@ -185,6 +185,12 @@ export interface Item {
   stats: Record<string, number>;
 }
 
+// Position types
+export interface ChampionPosition {
+  primary: 'Top' | 'Jungle' | 'Mid' | 'Bot' | 'Support';
+  secondary?: ('Top' | 'Jungle' | 'Mid' | 'Bot' | 'Support')[];
+}
+
 // Local storage types
 export interface FavoriteChampions {
   [championId: string]: boolean;

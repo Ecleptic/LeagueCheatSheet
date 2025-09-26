@@ -5,10 +5,13 @@ import { ChampionSummary, ChampionDetail } from '@/types/champion';
 import { riotApi } from '@/lib/riot-api';
 import { useSkinSelection } from '@/contexts/SkinSelectionContext';
 import { useChampionInfo } from '@/contexts/ChampionInfoContext';
+import { useChampionPositions } from '@/hooks/useChampionPositions';
+import { Position } from '@/types/team';
 import ImageModal from './ImageModal';
 import ChampionImage from './ChampionImage';
 import PassiveImage from './PassiveImage';
 import AbilityImage from './AbilityImage';
+import PositionIcon from './PositionIcon';
 
 interface ChampionModalProps {
   champion: ChampionSummary;
@@ -114,14 +117,14 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
   };
   const { getSelectedSkin, setSelectedSkin } = useSkinSelection();
   const { getChampionInfo, setPlayerName, setNotes } = useChampionInfo();
-  
+  const { getChampionPosition } = useChampionPositions();
+
   // Get the selected skin number for this champion
   const selectedSkinNum = getSelectedSkin(champion.id);
-  
+
   // Get champion info
   const championInfo = getChampionInfo(champion.id);
-
-  // Handler for selecting a skin
+  const championPosition = getChampionPosition(champion.id);  // Handler for selecting a skin
   const handleSkinSelect = (skinNum: number) => {
     setSelectedSkin(champion.id, skinNum);
   };
@@ -243,10 +246,34 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <span className="px-3 py-1 bg-red-600/80 text-white text-sm rounded-full">
-                {champion.tags[0]}
-              </span>
-              <span className="text-white/90 text-sm">● Melee</span>
+              {/* Show positions if available, otherwise show role */}
+              {championPosition ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 px-3 py-1 bg-blue-600/80 text-white text-sm rounded-full">
+                    <PositionIcon 
+                      position={championPosition.primary.toLowerCase() as Position} 
+                      size={16} 
+                      className="text-white"
+                    />
+                    <span>{championPosition.primary}</span>
+                  </div>
+                  {championPosition.secondary && championPosition.secondary.length > 0 && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-gray-600/60 text-white text-xs rounded-full">
+                      <PositionIcon 
+                        position={championPosition.secondary[0].toLowerCase() as Position} 
+                        size={14} 
+                        className="text-white opacity-80"
+                      />
+                      <span>{championPosition.secondary[0]}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <span className="px-3 py-1 bg-red-600/80 text-white text-sm rounded-full">
+                  {champion.tags[0]}
+                </span>
+              )}
+              <span className="text-white/90 text-sm">● {champion.stats.attackrange > 300 ? 'Ranged' : 'Melee'}</span>
               <span className="text-white/90 text-sm">
                 {champion.info.difficulty <= 3 ? 'Easy' : 
                  champion.info.difficulty <= 6 ? 'Medium' : 'Hard'}
@@ -318,8 +345,34 @@ const ChampionModal: React.FC<ChampionModalProps> = ({
                   {/* Quick Stats */}
                   <div className="flex justify-between items-center mb-6 bg-riot-gray rounded-lg p-4">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-red-400">{champion.tags[0]}</div>
-                      <div className="text-xs text-gray-400">Primary Role</div>
+                      {championPosition ? (
+                        <div className="flex flex-col items-center">
+                          <div className="flex items-center gap-1 text-lg font-bold text-blue-400">
+                            <PositionIcon 
+                              position={championPosition.primary.toLowerCase() as Position} 
+                              size={20}
+                              className="text-blue-400"
+                            />
+                            <span>{championPosition.primary}</span>
+                          </div>
+                          <div className="text-xs text-gray-400">Primary Position</div>
+                          {championPosition.secondary && championPosition.secondary.length > 0 && (
+                            <div className="flex items-center gap-1 mt-1 text-sm text-gray-300">
+                              <PositionIcon 
+                                position={championPosition.secondary[0].toLowerCase() as Position} 
+                                size={14}
+                                className="text-gray-400"
+                              />
+                              <span className="text-xs">{championPosition.secondary[0]}</span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <>
+                          <div className="text-lg font-bold text-red-400">{champion.tags[0]}</div>
+                          <div className="text-xs text-gray-400">Primary Role</div>
+                        </>
+                      )}
                     </div>
                     <div className="text-center">
                       <div className="text-lg font-bold text-yellow-400">

@@ -3,12 +3,14 @@
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useChampions } from '@/hooks/useChampions';
+import { useChampionPositions } from '@/hooks/useChampionPositions';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useChampionInfo } from '@/contexts/ChampionInfoContext';
 import { useSummonerSpells } from '@/hooks/useSummonerSpells';
 import { useItems } from '@/hooks/useItems';
 import { ChampionSummary } from '@/types/champion';
 import { SummonerSpellSummary } from '@/types/summonerSpell';
+import { Position } from '@/types/team';
 import TeamView from '@/components/teams/TeamView';
 import { ItemSummary } from '@/hooks/useItems';
 import ChampionCard from '@/components/ChampionCard';
@@ -18,10 +20,12 @@ import SummonerSpellCard from '@/components/SummonerSpellCard';
 import SummonerSpellModal from '@/components/SummonerSpellModal';
 import ItemCard from '@/components/ItemCard';
 import ItemModal from '@/components/ItemModal';
+import PositionIcon from '@/components/PositionIcon';
 import { riotApi } from '@/lib/riot-api';
 
 export default function ChampionsPage() {
   const { champions, loading, error, refreshChampions } = useChampions();
+  const { getChampionPosition } = useChampionPositions();
   const { isFavorite, toggleFavorite, favoriteCount } = useFavorites();
   const { getChampionInfo } = useChampionInfo();
   const { summonerSpells, loading: spellsLoading, error: spellsError, refreshSummonerSpells } = useSummonerSpells();
@@ -30,14 +34,26 @@ export default function ChampionsPage() {
   const [selectedSummonerSpell, setSelectedSummonerSpell] = useState<SummonerSpellSummary | null>(null);
   const [selectedItem, setSelectedItem] = useState<ItemSummary | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPosition, setSelectedPosition] = useState<Position | ''>('');
   const [activeTab, setActiveTab] = useState<'champions' | 'spells' | 'items' | 'teams'>('champions');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Filter champions based on search term
-  const filteredChampions = champions.filter(champion =>
-    champion.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    champion.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter champions based on search term and position
+  const filteredChampions = champions.filter(champion => {
+    const matchesSearch = champion.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         champion.title.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (!selectedPosition) return matchesSearch;
+    
+    const championPosition = getChampionPosition(champion.id);
+    if (!championPosition) return matchesSearch; // If no position data, don't filter out
+    
+    const positionToMatch = (selectedPosition.charAt(0).toUpperCase() + selectedPosition.slice(1)) as 'Top' | 'Jungle' | 'Mid' | 'Bot' | 'Support';
+    const matchesPosition = championPosition.primary === positionToMatch ||
+                           (championPosition.secondary && championPosition.secondary.includes(positionToMatch));
+    
+    return matchesSearch && matchesPosition;
+  });
 
   // Filter summoner spells based on search term
   const filteredSummonerSpells = summonerSpells.filter(spell =>
@@ -238,6 +254,36 @@ export default function ChampionsPage() {
                   </button>
                 )}
               </>
+            )}
+            
+            {/* Position filters for champions */}
+            {activeTab === 'champions' && (
+              <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+                <button
+                  onClick={() => setSelectedPosition('')}
+                  className={`px-3 py-1 rounded-full text-xs whitespace-nowrap flex items-center gap-1 transition-colors ${
+                    selectedPosition === '' 
+                      ? 'bg-riot-blue text-white' 
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  All Positions
+                </button>
+                {(['top', 'jungle', 'mid', 'bot', 'support'] as Position[]).map(position => (
+                  <button
+                    key={position}
+                    onClick={() => setSelectedPosition(selectedPosition === position ? '' : position)}
+                    className={`px-3 py-1 rounded-full text-xs whitespace-nowrap flex items-center gap-1 transition-colors ${
+                      selectedPosition === position 
+                        ? 'bg-riot-blue text-white' 
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    <PositionIcon position={position} size={14} />
+                    {position.charAt(0).toUpperCase() + position.slice(1)}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
         </div>

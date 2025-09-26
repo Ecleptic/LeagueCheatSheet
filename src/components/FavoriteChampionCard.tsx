@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { ChampionSummary } from '@/types/champion';
 import { riotApi } from '@/lib/riot-api';
+import { useChampionPositions } from '@/hooks/useChampionPositions';
+import PositionIcon from './PositionIcon';
+import { Position } from '@/types/team';
 
 interface FavoriteChampionCardProps {
   champion: ChampionSummary;
@@ -16,6 +19,8 @@ const FavoriteChampionCard: React.FC<FavoriteChampionCardProps> = ({
   playerName
 }) => {
   const [championImageUrl, setChampionImageUrl] = useState<string>('');
+  const { getChampionPosition } = useChampionPositions();
+  const championPosition = getChampionPosition(champion.id);
 
   useEffect(() => {
     riotApi.getChampionImageUrl(champion.image.full).then(url => {
@@ -44,6 +49,18 @@ const FavoriteChampionCard: React.FC<FavoriteChampionCardProps> = ({
       <p className="text-xs text-center text-blue-100">{champion.name}</p>
       {playerName && (
         <p className="text-xs text-center text-orange-400 font-medium">{playerName}</p>
+      )}
+      {championPosition && (
+        <div className="flex justify-center mt-1">
+          <div className="flex items-center gap-1">
+            <PositionIcon 
+              position={championPosition.primary.toLowerCase() as Position} 
+              size={12}
+              className="opacity-80"
+            />
+            <span className="text-xs text-blue-200">{championPosition.primary}</span>
+          </div>
+        </div>
       )}
     </div>
   );
