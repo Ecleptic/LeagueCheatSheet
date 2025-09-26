@@ -99,21 +99,6 @@ const TeamPanel: React.FC<TeamPanelProps> = ({ team }) => {
           />
         ))}
       </div>
-
-      {/* Team Actions */}
-      <div className="border-t border-gray-600 p-3 bg-riot-gray/50">
-        <div className="flex gap-2">
-          <button className="flex-1 px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-500 transition-colors">
-            📋 Analyze Comp
-          </button>
-          <button className="flex-1 px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-500 transition-colors">
-            🎯 Suggest Builds
-          </button>
-          <button className="px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-500 transition-colors">
-            ⚡ Quick Fill
-          </button>
-        </div>
-      </div>
     </div>
   );
 };

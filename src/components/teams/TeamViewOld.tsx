@@ -21,9 +21,6 @@ const TeamView: React.FC = () => {
   
   // Saved configurations
   const [savedConfigs, setSavedConfigs] = useState<Record<string, any>>({});
-  
-  // Reset key to force MultiStepTeamBuilder remount
-  const [resetKey, setResetKey] = useState(0);
 
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const newToast: Toast = {
@@ -48,6 +45,9 @@ const TeamView: React.FC = () => {
     }
   };
 
+const TeamView: React.FC = () => {
+  const { gameState, dispatch } = useTeam();
+
   const handleSaveConfiguration = (configName: string) => {
     try {
       const configs = loadSavedConfigurations();
@@ -56,6 +56,7 @@ const TeamView: React.FC = () => {
       const configData = {
         gameState,
         builderState: {
+          // Determine current builder state based on completion
           blueTeamName: gameState.blueTeam.name,
           redTeamName: gameState.redTeam.name,
           playersSetup: gameState.blueTeam.players.every(p => p.name.trim() !== '') &&
@@ -119,11 +120,10 @@ const TeamView: React.FC = () => {
 
   const handleResetGame = () => {
     dispatch({ type: 'RESET_GAME' });
-    setResetKey(prev => prev + 1); // Force MultiStepTeamBuilder to remount and reset to step 1
     addToast({
       type: 'info',
       title: 'Game Reset',
-      message: 'All team data has been cleared. Start fresh from step 1!'
+      message: 'All team data has been cleared. Start fresh!'
     });
   };
 
@@ -145,6 +145,7 @@ const TeamView: React.FC = () => {
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-red-900">
         <div className="container mx-auto">
+          {/* Header */}
           <div className="text-center py-8">
             <h1 className="text-4xl font-bold text-white mb-4">
               ⚔️ League Team Builder
@@ -154,13 +155,16 @@ const TeamView: React.FC = () => {
             </p>
           </div>
 
+          {/* Multi-Step Team Builder */}
           <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-2xl m-4 p-6">
+            {/* Team Builder Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-white mb-2">Team Builder</h1>
                 <p className="text-gray-400 text-sm">Create and configure your League of Legends team compositions</p>
               </div>
               
+              {/* Team Builder Controls */}
               <div className="flex flex-wrap gap-2">
                 <button 
                   className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm"
@@ -191,11 +195,13 @@ const TeamView: React.FC = () => {
               </div>
             </div>
             
-            <MultiStepTeamBuilder key={resetKey} />
+            {/* Multi-Step Team Builder Content */}
+            <MultiStepTeamBuilder />
           </div>
         </div>
       </div>
 
+      {/* Modals */}
       <ConfirmationModal
         isOpen={showResetConfirm}
         onClose={() => setShowResetConfirm(false)}
@@ -223,6 +229,7 @@ const TeamView: React.FC = () => {
         configurations={savedConfigs}
       />
 
+      {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </>
   );

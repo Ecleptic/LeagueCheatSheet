@@ -201,7 +201,7 @@ export const getItemRecommendations = (
 
       recommendations.push({
         nextItem: item,
-        alternatives: [], // TODO: Implement alternatives logic
+        alternatives: [], // Keep simple - no complex alternatives logic
         reasoning,
         costEfficiency: efficiency.efficiency,
         buildPath

@@ -11,6 +11,13 @@ interface ItemModalProps {
 const ItemModal: React.FC<ItemModalProps> = ({ item, isOpen, onClose }) => {
   if (!isOpen || !item) return null;
 
+  // Handle overlay click to close modal
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   // Format gold cost
   const formatGold = (gold: number) => {
     return gold.toLocaleString();
@@ -83,7 +90,10 @@ const ItemModal: React.FC<ItemModalProps> = ({ item, isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
+      onClick={handleOverlayClick}
+    >
       <div className="bg-riot-gray rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
         {/* Header */}
         <div className="relative bg-gradient-to-r from-riot-dark to-riot-gray p-6 rounded-t-lg">
