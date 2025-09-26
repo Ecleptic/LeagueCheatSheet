@@ -1,6 +1,6 @@
 import React from 'react';
 import { ItemSummary } from '@/hooks/useItems';
-import ItemImage from './ItemImage';
+import ItemImage from './ui/ItemImage';
 
 interface ItemCardProps {
   item: ItemSummary;

@@ -1,6 +1,6 @@
-import { Item, ChampionSummary } from '../types/champion';
-import { BuildPath, BuildRecommendation, ItemEfficiency, BuildAnalysis } from '../types/build';
-import { GamePhase } from '../types/team';
+import { Item, ChampionSummary } from '../../types/champion';
+import { BuildPath, BuildRecommendation, ItemEfficiency, BuildAnalysis } from '../../types/build';
+import { GamePhase } from '../../types/team';
 
 // Gold values for stats (approximate values based on basic items)
 const STAT_GOLD_VALUES: Record<string, number> = {

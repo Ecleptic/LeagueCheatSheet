@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useItems } from '@/hooks/useItems';
 import { usePlayerActions } from '@/hooks/useTeamActions';
-import ItemImage from '@/components/ItemImage';
+import ItemImage from '@/components/ui/ItemImage';
 import { Item } from '@/types/champion';
 import { ItemSummary } from '@/hooks/useItems';
 

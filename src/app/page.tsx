@@ -14,12 +14,12 @@ import { Position } from '@/types/team';
 import TeamView from '@/components/teams/TeamView';
 import { ItemSummary } from '@/hooks/useItems';
 import ChampionCard from '@/components/ChampionCard';
-import ChampionModal from '@/components/ChampionModal';
+import ChampionModal from '@/components/modals/ChampionModal';
 import FavoriteChampionCard from '@/components/FavoriteChampionCard';
 import SummonerSpellCard from '@/components/SummonerSpellCard';
-import SummonerSpellModal from '@/components/SummonerSpellModal';
+import SummonerSpellModal from '@/components/modals/SummonerSpellModal';
 import ItemCard from '@/components/ItemCard';
-import ItemModal from '@/components/ItemModal';
+import ItemModal from '@/components/modals/ItemModal';
 import PositionIcon from '@/components/PositionIcon';
 import { riotApi } from '@/lib/riot-api';
 

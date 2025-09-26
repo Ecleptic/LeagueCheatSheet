@@ -5,11 +5,12 @@ import { useTeam } from '@/contexts/TeamContext';
 import { TeamBuilderStep, Position, createDefaultTeamBuilderState, TeamBuilderState } from '@/types/team';
 import PositionIcon, { getAllPositions } from '@/components/PositionIcon';
 import { ChampionSummary } from '@/types/champion';
-import ChampionImage from '@/components/ChampionImage';
+import ChampionImage from '@/components/ui/ChampionImage';
 import { SummonerSpell } from '@/types/summonerSpell';
-import SummonerSpellImage from '@/components/SummonerSpellImage';
+import SummonerSpellImage from '@/components/ui/SummonerSpellImage';
 import ChampionSelector from './ChampionSelector';
 import SummonerSpellSelector from './SummonerSpellSelector';
+import SummonerSpellModal from '@/components/modals/SummonerSpellModal';
 
 interface MultiStepTeamBuilderProps {
   className?: string;

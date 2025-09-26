@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { useTeam } from '../../contexts/TeamContext';
 import MultiStepTeamBuilder from './MultiStepTeamBuilder';
-import ConfirmationModal from '../ConfirmationModal';
-import InputModal from '../InputModal';
-import ConfigurationSelectModal from '../ConfigurationSelectModal';
+import ConfirmationModal from '../modals/ConfirmationModal';
+import InputModal from '../modals/InputModal';
+import ConfigurationSelectModal from '../modals/ConfigurationSelectModal';
 import ToastContainer, { Toast } from '../ToastContainer';
 
 const TeamView: React.FC = () => {

@@ -8,10 +8,10 @@ import { useChampionInfo } from '@/contexts/ChampionInfoContext';
 import { useChampionPositions } from '@/hooks/useChampionPositions';
 import { Position } from '@/types/team';
 import ImageModal from './ImageModal';
-import ChampionImage from './ChampionImage';
-import PassiveImage from './PassiveImage';
-import AbilityImage from './AbilityImage';
-import PositionIcon from './PositionIcon';
+import ChampionImage from '../ui/ChampionImage';
+import PassiveImage from '../ui/PassiveImage';
+import AbilityImage from '../ui/AbilityImage';
+import PositionIcon from '../PositionIcon';
 
 interface ChampionModalProps {
   champion: ChampionSummary;

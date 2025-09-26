@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { SummonerSpell } from '@/types/summonerSpell';
 import { useSummonerSpells } from '@/hooks/useSummonerSpells';
 import { usePlayerActions } from '@/hooks/useTeamActions';
-import SummonerSpellImage from '@/components/SummonerSpellImage';
+import SummonerSpellImage from '@/components/ui/SummonerSpellImage';
 
 interface SummonerSpellSelectorProps {
   isOpen: boolean;
