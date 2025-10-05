@@ -275,9 +275,18 @@ class EsportsAPI {
   async getCurrentLiveMatches() {
     try {
       const response = await this.getLive();
-      const allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
+      let allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
       
       console.log('🔍 [ESPORTS API] Total events from getLive():', allEvents.length);
+      
+      // If getLive is empty, fallback to getSchedule and filter for inProgress
+      if (allEvents.length === 0) {
+        console.log('⚡ [ESPORTS API] getLive() empty, trying getSchedule() as fallback...');
+        const scheduleResponse = await this.getSchedule([]);
+        const scheduleEvents = (scheduleResponse.data?.schedule?.events || []) as RawEsportsEvent[];
+        allEvents = scheduleEvents.filter((event: RawEsportsEvent) => event.state === 'inProgress');
+        console.log('📅 [ESPORTS API] Found', allEvents.length, 'inProgress events from getSchedule()');
+      }
       
       // Filter for events that are currently in progress (both matches and shows)
       const liveEvents = allEvents.filter((event: RawEsportsEvent) => 
@@ -286,7 +295,7 @@ class EsportsAPI {
       
       console.log('🔴 [ESPORTS API] Live events (inProgress):', liveEvents.length);
       liveEvents.forEach((event, idx) => {
-        console.log(`  ${idx + 1}. Type: ${event.type}, ID: ${event.id}, State: ${event.state}`);
+        console.log(`  ${idx + 1}. Type: ${event.type}, ID: ${event.id || event.match?.id}, State: ${event.state}`);
       });
       
       // For live matches, try to get detailed game information
@@ -294,13 +303,14 @@ class EsportsAPI {
         const transformed = this.transformEventToMatch(event);
         
         // If it's a live match, try to get game details
-        if (event.type === 'match' && event.id) {
+        const matchId = event.match?.id || event.id;
+        if (event.type === 'match' && matchId) {
           try {
-            console.log(`📊 [ESPORTS API] Fetching details for match event ${event.id}...`);
-            const eventDetails = await this.getEventDetails(parseInt(event.id));
+            console.log(`📊 [ESPORTS API] Fetching details for match event ${matchId}...`);
+            const eventDetails = await this.getEventDetails(parseInt(matchId as string));
             const games = (eventDetails.data?.event?.match?.games || []) as { id?: string; state?: string; [key: string]: unknown }[];
             
-            console.log(`  Found ${games.length} games for event ${event.id}`);
+            console.log(`  Found ${games.length} games for event ${matchId}`);
             games.forEach((game, idx) => {
               console.log(`    Game ${idx + 1}: ID=${game.id}, State=${game.state}`);
             });
@@ -338,10 +348,10 @@ class EsportsAPI {
               extendedTransformed.liveGameDetails = gameDetails;
               extendedTransformed.currentGame = liveGame;
             } else {
-              console.log(`  ⚠️ No live game found for event ${event.id}`);
+              console.log(`  ⚠️ No live game found for event ${matchId}`);
             }
           } catch (error) {
-            console.error(`❌ [ESPORTS API] Failed to get live game stats for event ${event.id}:`, error);
+            console.error(`❌ [ESPORTS API] Failed to get live game stats for event ${matchId}:`, error);
           }
         }
         

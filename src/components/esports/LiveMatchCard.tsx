@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import Image from 'next/image';
 import { Match } from '@/lib/esports/api';
 import { getLeagueIcon, ESPORTS_CONFIG } from '@/lib/esports/config';
@@ -22,19 +22,30 @@ interface StreamData {
 }
 
 const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
-  const [showDemo, setShowDemo] = useState(false);
   const [showStream, setShowStream] = useState(true); // Auto-show stream by default
+  const [isTheatreMode, setIsTheatreMode] = useState(false); // Theatre mode for stats
   
   // Debug: Log match data to see what we're receiving
   React.useEffect(() => {
+    const rawMatch = match as Match & Record<string, unknown>;
     console.log('🎴 [LiveMatchCard] Rendering with match:', {
       id: match.id,
       type: match.type,
       state: match.state,
-      hasLiveGameStats: !!(match as Match & Record<string, unknown>).liveGameStats,
-      hasCurrentGame: !!(match as Match & Record<string, unknown>).currentGame,
-      hasStreams: !!((match as Match & Record<string, unknown>).streams as unknown[])?.length
+      hasLiveGameStats: !!rawMatch.liveGameStats,
+      hasCurrentGame: !!rawMatch.currentGame,
+      hasStreams: !!(rawMatch.streams as unknown[])?.length,
+      liveGameStatsKeys: rawMatch.liveGameStats ? Object.keys(rawMatch.liveGameStats) : null,
+      currentGameData: rawMatch.currentGame
     });
+    
+    // Log the actual stats if available
+    if (rawMatch.liveGameStats) {
+      console.log('  📊 liveGameStats:', rawMatch.liveGameStats);
+    }
+    if (rawMatch.liveGameDetails) {
+      console.log('  📋 liveGameDetails:', rawMatch.liveGameDetails);
+    }
   }, [match]);
   
   const getMatchTime = (startTime: string) => {
@@ -165,50 +176,6 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
   const currentGame = rawMatch.currentGame;
   const gamesSummary = getGamesSummary();
 
-  // Demo data for testing the live statistics display
-  const demoGameStats = {
-    gameMetadata: {
-      patchVersion: ESPORTS_CONFIG.DEMO.PATCH_VERSION,
-      blueTeamMetadata: {
-        participantMetadata: [
-          { participantId: 1, summonerName: 'Player1', championId: 'Jinx', role: 'bot' },
-          { participantId: 2, summonerName: 'Player2', championId: 'Thresh', role: 'support' },
-          { participantId: 3, summonerName: 'Player3', championId: 'Graves', role: 'jungle' },
-          { participantId: 4, summonerName: 'Player4', championId: 'Azir', role: 'mid' },
-          { participantId: 5, summonerName: 'Player5', championId: 'Gnar', role: 'top' }
-        ]
-      },
-      redTeamMetadata: {
-        participantMetadata: [
-          { participantId: 6, summonerName: 'Enemy1', championId: 'Ashe', role: 'bot' },
-          { participantId: 7, summonerName: 'Enemy2', championId: 'Leona', role: 'support' },
-          { participantId: 8, summonerName: 'Enemy3', championId: 'Hecarim', role: 'jungle' },
-          { participantId: 9, summonerName: 'Enemy4', championId: 'Syndra', role: 'mid' },
-          { participantId: 10, summonerName: 'Enemy5', championId: 'Ornn', role: 'top' }
-        ]
-      }
-    }
-  };
-
-  const demoGameDetails = {
-    frames: [{
-      participants: [
-        { participantId: 1, kills: 3, deaths: 1, assists: 5, totalGoldEarned: 8500, level: 12, creepScore: 145, items: [3031, 1018, 3006, 3046, 0, 0] },
-        { participantId: 2, kills: 0, deaths: 2, assists: 8, totalGoldEarned: 5200, level: 10, creepScore: 25, items: [3190, 1001, 3117, 2055, 0, 0] },
-        { participantId: 3, kills: 4, deaths: 0, assists: 3, totalGoldEarned: 7800, level: 11, creepScore: 98, items: [1400, 3134, 3006, 1037, 0, 0] },
-        { participantId: 4, kills: 2, deaths: 1, assists: 4, totalGoldEarned: 7200, level: 11, creepScore: 112, items: [3020, 1052, 3145, 1058, 0, 0] },
-        { participantId: 5, kills: 1, deaths: 2, assists: 6, totalGoldEarned: 6900, level: 10, creepScore: 89, items: [3068, 1029, 3047, 1028, 0, 0] },
-        { participantId: 6, kills: 2, deaths: 3, assists: 2, totalGoldEarned: 6800, level: 10, creepScore: 128, items: [3031, 1038, 1042, 3006, 0, 0] },
-        { participantId: 7, kills: 1, deaths: 1, assists: 4, totalGoldEarned: 4900, level: 9, creepScore: 18, items: [3190, 1001, 3117, 2055, 0, 0] },
-        { participantId: 8, kills: 1, deaths: 4, assists: 4, totalGoldEarned: 5800, level: 9, creepScore: 82, items: [1400, 3134, 1011, 1029, 0, 0] },
-        { participantId: 9, kills: 2, deaths: 2, assists: 3, totalGoldEarned: 6400, level: 10, creepScore: 95, items: [3020, 1052, 3145, 1026, 0, 0] },
-        { participantId: 10, kills: 0, deaths: 1, assists: 5, totalGoldEarned: 5900, level: 9, creepScore: 78, items: [3068, 1029, 3047, 1028, 0, 0] }
-      ]
-    }]
-  };
-
-  const demoCurrentGame = { number: 2 };
-
   return (
     <div className="bg-riot-gray/50 rounded-lg border border-gray-600 overflow-hidden hover:border-riot-blue/50 transition-colors">
       {/* Match Header */}
@@ -336,22 +303,6 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
           </div>
         )}
 
-        {/* Demo Stats Button - Show for all live matches */}
-        {match.state === 'inProgress' && match.type === 'match' && (
-          <div className="mt-3">
-            <button
-              onClick={() => setShowDemo(!showDemo)}
-              className="w-full text-xs bg-green-900/30 text-green-300 px-3 py-2 rounded hover:bg-green-800/30 transition-colors"
-            >
-              {showDemo ? '🔽 Hide Demo Stats' : '🎮 Show Demo Live Stats (Example)'}
-            </button>
-            {!showDemo && !liveGameStats && (
-              <div className="text-xs text-gray-400 text-center mt-1">
-                Click to see what live match stats look like
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Teams or Event Info */}
@@ -443,6 +394,8 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
                     <EmbeddedStreamPlayer 
                       streams={streams as StreamData[]}
                       onClose={() => setShowStream(false)}
+                      onToggleTheatre={() => setIsTheatreMode(!isTheatreMode)}
+                      isTheatreMode={isTheatreMode}
                     />
                     <div className="text-center">
                       <button
@@ -493,28 +446,40 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
           </div>
         )}
         
-        {/* Live Game Stats */}
-        {(liveGameStats && currentGame) || showDemo ? (
+        {/* Live Game Stats - Always show when available */}
+        {liveGameStats ? (
           <div className="mt-3">
-            {showDemo && !liveGameStats ? (
-              <div className="mb-2 text-center text-xs bg-green-900/20 text-green-300 py-1 px-2 rounded border border-green-500/20">
-                📊 Demo Data - This is example data showing what live stats look like
-              </div>
-            ) : liveGameStats ? (
-              <div className="mb-2 text-center text-xs bg-blue-900/20 text-blue-300 py-1 px-2 rounded border border-blue-500/20">
-                🔴 LIVE - Real-time match data
-              </div>
-            ) : null}
+            <div className="mb-2 text-center text-xs py-1 px-2 rounded border">
+              {rawMatch.isCurrentGameLive ? (
+                <div className="bg-blue-900/20 text-blue-300 border-blue-500/20">
+                  🔴 LIVE - Real-time match data (Game {(currentGame as { number?: number })?.number || '?'})
+                </div>
+              ) : (
+                <div className="bg-gray-900/20 text-gray-300 border-gray-500/20">
+                  📊 Game {(currentGame as { number?: number })?.number || '?'} Final Stats {(currentGame as { state?: string })?.state === 'completed' ? '(Completed)' : ''}
+                </div>
+              )}
+            </div>
             <LiveGameStats 
-              gameStats={showDemo && !liveGameStats ? demoGameStats : liveGameStats as unknown as Parameters<typeof LiveGameStats>[0]['gameStats']} 
-              gameDetails={showDemo && !liveGameStats ? demoGameDetails : rawMatch.liveGameDetails as unknown as Parameters<typeof LiveGameStats>[0]['gameDetails']}
-              currentGame={showDemo && !liveGameStats ? demoCurrentGame : currentGame as unknown as Parameters<typeof LiveGameStats>[0]['currentGame']} 
+              gameStats={liveGameStats as unknown as Parameters<typeof LiveGameStats>[0]['gameStats']} 
+              gameDetails={rawMatch.liveGameDetails as unknown as Parameters<typeof LiveGameStats>[0]['gameDetails']}
+              currentGame={currentGame as unknown as Parameters<typeof LiveGameStats>[0]['currentGame']} 
             />
+          </div>
+        ) : currentGame && !rawMatch.isCurrentGameLive ? (
+          <div className="mt-3 text-center py-4 bg-gradient-to-br from-riot-dark/80 to-riot-gray/50 rounded border border-gray-600">
+            <div className="text-lg mb-2">⏸️</div>
+            <div className="text-sm font-medium text-white mb-1">Between Games</div>
+            <div className="text-xs text-gray-400">
+              Game {(currentGame as { number?: number })?.number || '?'} has ended. Waiting for next game to start...
+            </div>
+            <div className="mt-2 text-xs text-gray-500">
+              Stats will appear when the next game begins
+            </div>
           </div>
         ) : match.state === 'inProgress' && match.type === 'match' ? (
           <div className="mt-3 text-center text-sm text-gray-400 py-3 bg-riot-dark/50 rounded">
             <div className="mb-1">📊 Live stats not available for this match</div>
-            <div className="text-xs">Click &quot;Show Demo Stats&quot; to see an example</div>
           </div>
         ) : null}
       </div>
@@ -522,4 +487,45 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
   );
 };
 
-export default LiveMatchCard;
+LiveMatchCard.displayName = 'LiveMatchCard';
+
+// Custom comparison function - only re-render if stats data actually changed
+const arePropsEqual = (prevProps: LiveMatchCardProps, nextProps: LiveMatchCardProps) => {
+  // Always re-render if match ID changed
+  if (prevProps.match.id !== nextProps.match.id) {
+    return false;
+  }
+  
+  // Check if live game stats changed (this is what updates every 30 seconds)
+  const prevMatch = prevProps.match as Match & Record<string, unknown>;
+  const nextMatch = nextProps.match as Match & Record<string, unknown>;
+  
+  const prevStats = prevMatch.liveGameStats as { frames?: unknown[] } | null | undefined;
+  const nextStats = nextMatch.liveGameStats as { frames?: unknown[] } | null | undefined;
+  
+  // If stats existence changed, re-render
+  if ((prevStats === null || prevStats === undefined) !== (nextStats === null || nextStats === undefined)) {
+    return false;
+  }
+  
+  // If both have stats, check if frame count changed (indicates new data)
+  if (prevStats?.frames && nextStats?.frames) {
+    const prevFrameCount = prevStats.frames.length;
+    const nextFrameCount = nextStats.frames.length;
+    if (prevFrameCount !== nextFrameCount) {
+      return false; // Stats updated, re-render
+    }
+    
+    // Also check the latest frame data for changes (kills, deaths, gold)
+    const prevLatest = JSON.stringify(prevStats.frames[prevStats.frames.length - 1]);
+    const nextLatest = JSON.stringify(nextStats.frames[nextStats.frames.length - 1]);
+    if (prevLatest !== nextLatest) {
+      return false; // Latest stats changed, re-render
+    }
+  }
+  
+  // Otherwise, props are equal, don't re-render
+  return true;
+};
+
+export default memo(LiveMatchCard, arePropsEqual);

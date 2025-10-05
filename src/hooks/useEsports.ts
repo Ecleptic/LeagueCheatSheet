@@ -38,9 +38,20 @@ export function useEsportsLive() {
   useEffect(() => {
     async function fetchLiveMatches() {
       try {
-        setLoading(true);
+        // Don't set loading on subsequent fetches to prevent flash
+        const isInitialLoad = matches.length === 0 && loading;
+        if (isInitialLoad) {
+          setLoading(true);
+        }
+        
         const data = await esportsApi.getCurrentLiveMatches();
-        setMatches(data);
+        
+        // Always update if data exists - stats should update every 30 seconds
+        // Only skip update if both old and new are empty (no matches)
+        if (data.length > 0 || matches.length > 0) {
+          setMatches(data);
+        }
+        
         setError(null);
       } catch (err) {
         console.error('Failed to fetch live matches:', err);
@@ -56,7 +67,7 @@ export function useEsportsLive() {
     const interval = setInterval(fetchLiveMatches, 30000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { matches, loading, error };
 }

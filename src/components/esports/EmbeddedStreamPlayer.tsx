@@ -15,11 +15,12 @@ interface StreamData {
 interface EmbeddedStreamPlayerProps {
   streams: StreamData[];
   onClose?: () => void;
+  onToggleTheatre?: () => void;
+  isTheatreMode?: boolean;
 }
 
-const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, onClose }) => {
+const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, onClose, onToggleTheatre, isTheatreMode = false }) => {
   const [selectedStream, setSelectedStream] = useState<StreamData | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Priority order for stream selection
   const selectBestStream = (streams: StreamData[]): StreamData | null => {
@@ -117,10 +118,10 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
     : 'text-purple-400';
 
   return (
-    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-black' : 'relative'}`}>
-      <div className={`${isFullscreen ? 'h-full' : 'bg-riot-dark border border-gray-600 rounded-lg overflow-hidden'}`}>
+    <div className={`${isTheatreMode ? 'fixed inset-0 z-50 bg-black' : 'relative'}`}>
+      <div className={`${isTheatreMode ? 'h-full' : 'bg-riot-dark border border-gray-600 rounded-lg overflow-hidden'}`}>
         {/* Header */}
-        <div className={`flex items-center justify-between p-3 bg-riot-gray border-b border-gray-600 ${isFullscreen ? '' : ''}`}>
+        <div className={`flex items-center justify-between p-3 bg-riot-gray border-b border-gray-600`}>
           <div className="flex items-center space-x-2 flex-1 min-w-0">
             <span className={`text-lg ${providerColor}`}>{providerIcon}</span>
             <div className="flex-1 min-w-0">
@@ -149,25 +150,27 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
               </select>
             )}
             
-            {/* Fullscreen Toggle */}
-            <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="text-gray-400 hover:text-white transition-colors p-1"
-              title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-            >
-              {isFullscreen ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                </svg>
-              )}
-            </button>
+            {/* Theatre Mode Toggle */}
+            {onToggleTheatre && (
+              <button
+                onClick={onToggleTheatre}
+                className="text-gray-400 hover:text-white transition-colors p-1"
+                title={isTheatreMode ? 'Exit theatre mode' : 'Theatre mode (show stats)'}
+              >
+                {isTheatreMode ? (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+                  </svg>
+                )}
+              </button>
+            )}
 
             {/* Close Button */}
-            {onClose && !isFullscreen && (
+            {onClose && !isTheatreMode && (
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-white transition-colors p-1"
@@ -182,7 +185,7 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
         </div>
 
         {/* Stream Embed */}
-        <div className={`relative ${isFullscreen ? 'h-[calc(100%-60px)]' : 'aspect-video'} bg-black`}>
+        <div className={`relative ${isTheatreMode ? 'h-[calc(100%-60px)]' : 'aspect-video'} bg-black`}>
           <iframe
             src={embedUrl}
             className="absolute inset-0 w-full h-full"
@@ -192,8 +195,8 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
           />
         </div>
 
-        {/* Stream Info Footer (only when not fullscreen) */}
-        {!isFullscreen && (
+        {/* Stream Info Footer (only when not theatre mode) */}
+        {!isTheatreMode && (
           <div className="p-2 bg-riot-gray/50 border-t border-gray-600">
             <div className="flex items-center justify-between text-xs text-gray-400">
               <span>🔴 LIVE</span>

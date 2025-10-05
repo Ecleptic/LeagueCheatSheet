@@ -45,9 +45,11 @@ interface ParticipantStats {
   kills?: number;
   deaths?: number;
   assists?: number;
-  totalGoldEarned?: number;
+  totalGold?: number; // Changed from totalGoldEarned to match API
   creepScore?: number;
   items?: number[];
+  currentHealth?: number;
+  maxHealth?: number;
 }
 
 interface TeamData {
@@ -87,24 +89,72 @@ const LiveGameStats: React.FC<LiveGameStatsProps> = ({ gameStats, gameDetails, c
   const blueTeamMetadata = gameMetadata.blueTeamMetadata as TeamData | undefined;
   const redTeamMetadata = gameMetadata.redTeamMetadata as TeamData | undefined;
   
-  const frames = (gameDetails as { frames?: unknown[] })?.frames;
+  // IMPORTANT: Use frames from gameStats (window API), not gameDetails (details API)
+  // The window API has frames with blueTeam/redTeam structure
+  const frames = (gameStats as { frames?: unknown[] })?.frames;
   const latestFrame = frames && Array.isArray(frames) ? frames[frames.length - 1] : null;
-  const participants = (latestFrame as { participants?: unknown[] })?.participants || [];
+  
+  // Also get frames from gameDetails for items data (details API has items)
+  const detailsFrames = (gameDetails as { frames?: unknown[] })?.frames;
+  const latestDetailsFrame = detailsFrames && Array.isArray(detailsFrames) ? detailsFrames[detailsFrames.length - 1] : null;
+  
+  // Debug logging
+  console.log('🎮 [LiveGameStats] Processing data:', {
+    hasGameStats: !!gameStats,
+    hasGameDetails: !!gameDetails,
+    hasFrames: !!frames,
+    framesCount: frames?.length,
+    hasLatestFrame: !!latestFrame,
+    latestFrameKeys: latestFrame ? Object.keys(latestFrame) : null,
+    hasDetailsFrames: !!detailsFrames,
+    detailsFramesCount: detailsFrames?.length,
+  });
+  
+  if (latestFrame) {
+    console.log('📊 [LiveGameStats] Latest frame structure:', latestFrame);
+  }
+  
+  // Extract participants from blueTeam and redTeam
+  const blueTeamParticipants = (latestFrame as { blueTeam?: { participants?: unknown[] } })?.blueTeam?.participants || [];
+  const redTeamParticipants = (latestFrame as { redTeam?: { participants?: unknown[] } })?.redTeam?.participants || [];
+  const participants = [...blueTeamParticipants, ...redTeamParticipants];
+  
+  // Get items from details API if available (details has items, window doesn't)
+  const detailsParticipants = (latestDetailsFrame as { participants?: unknown[] })?.participants || [];
+  
+  // Merge items data into participants
+  participants.forEach((p: unknown, idx) => {
+    const participant = p as ParticipantStats;
+    const detailsParticipant = detailsParticipants[idx] as ParticipantStats | undefined;
+    if (detailsParticipant?.items) {
+      participant.items = detailsParticipant.items;
+    }
+  });
+  
+  console.log('👥 [LiveGameStats] Participants:', {
+    blueCount: blueTeamParticipants.length,
+    redCount: redTeamParticipants.length,
+    totalCount: participants.length,
+    blueSample: blueTeamParticipants[0],
+    redSample: redTeamParticipants[0],
+    allParticipantIds: participants.map((p: unknown) => (p as { participantId?: number }).participantId),
+    hasItems: participants.some((p: unknown) => (p as ParticipantStats).items && (p as ParticipantStats).items!.length > 0)
+  });
 
   // Calculate team totals
   const blueTeamStats = participants.slice(0, 5).reduce((acc: { kills: number; gold: number }, p: unknown) => {
-    const participant = p as { kills?: number; totalGoldEarned?: number };
+    const participant = p as { kills?: number; totalGold?: number };
     return {
       kills: acc.kills + (participant.kills || 0),
-      gold: acc.gold + (participant.totalGoldEarned || 0)
+      gold: acc.gold + (participant.totalGold || 0)
     };
   }, { kills: 0, gold: 0 });
 
   const redTeamStats = participants.slice(5, 10).reduce((acc: { kills: number; gold: number }, p: unknown) => {
-    const participant = p as { kills?: number; totalGoldEarned?: number };
+    const participant = p as { kills?: number; totalGold?: number };
     return {
       kills: acc.kills + (participant.kills || 0),
-      gold: acc.gold + (participant.totalGoldEarned || 0)
+      gold: acc.gold + (participant.totalGold || 0)
     };
   }, { kills: 0, gold: 0 });
 
@@ -118,6 +168,20 @@ const LiveGameStats: React.FC<LiveGameStatsProps> = ({ gameStats, gameDetails, c
   }> = ({ participant, isDetailed = false }) => {
     const stats = participants.find((p: unknown) => (p as ParticipantStats).participantId === participant.participantId) as ParticipantStats | undefined;
     const playerStats: ParticipantStats = stats || {} as ParticipantStats;
+    
+    // Debug logging for first participant
+    if (participant.participantId === 1) {
+      console.log('🔍 [PlayerRow] Looking for participant 1:', {
+        searchingFor: participant.participantId,
+        availableParticipants: participants.map((p: unknown) => ({
+          id: (p as ParticipantStats).participantId,
+          kills: (p as ParticipantStats).kills,
+          deaths: (p as ParticipantStats).deaths
+        })),
+        foundStats: stats,
+        playerStats
+      });
+    }
     
     return (
       <div className="flex items-center space-x-2 py-1">
@@ -149,7 +213,7 @@ const LiveGameStats: React.FC<LiveGameStatsProps> = ({ gameStats, gameDetails, c
                 {playerStats.kills || 0}/{playerStats.deaths || 0}/{playerStats.assists || 0}
               </div>
               <div className="text-gray-400">
-                {Math.floor((playerStats.totalGoldEarned || 0) / 1000)}k • {playerStats.creepScore || 0} CS
+                {Math.floor((playerStats.totalGold || 0) / 1000)}k • {playerStats.creepScore || 0} CS
               </div>
             </div>
           ) : (
@@ -159,17 +223,22 @@ const LiveGameStats: React.FC<LiveGameStatsProps> = ({ gameStats, gameDetails, c
           )}
         </div>
 
-        {isDetailed && playerStats.items && (
+        {isDetailed && playerStats.items && playerStats.items.length > 0 && (
           <div className="flex space-x-0.5">
-            {[0, 1, 2, 3, 4, 5].map(slot => (
-              <div key={slot} className="w-5 h-5">
-                <ItemImage
-                  itemImageFull={`${playerStats.items?.[slot] || 0}.png`}
-                  alt={`Item ${slot + 1}`}
-                  className="w-5 h-5"
-                />
-              </div>
-            ))}
+            {[0, 1, 2, 3, 4, 5].map(slot => {
+              const itemId = playerStats.items?.[slot];
+              return itemId && itemId !== 0 ? (
+                <div key={slot} className="w-5 h-5">
+                  <ItemImage
+                    itemImageFull={`${itemId}.png`}
+                    alt={`Item ${slot + 1}`}
+                    className="w-5 h-5"
+                  />
+                </div>
+              ) : (
+                <div key={slot} className="w-5 h-5 bg-gray-800/50 rounded border border-gray-700" />
+              );
+            })}
           </div>
         )}
       </div>
@@ -259,5 +328,7 @@ const LiveGameStats: React.FC<LiveGameStatsProps> = ({ gameStats, gameDetails, c
     </div>
   );
 };
+
+LiveGameStats.displayName = 'LiveGameStats';
 
 export default LiveGameStats;
