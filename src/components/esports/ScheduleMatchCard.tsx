@@ -19,6 +19,12 @@ interface ExtendedMatch extends Match {
 }
 
 const ScheduleMatchCard: React.FC<ScheduleMatchCardProps> = ({ match }) => {
+  // Helper function to format strategy type (bestOf -> Best of)
+  const formatStrategyType = (type: string): string => {
+    if (type === 'bestOf') return 'Best of';
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
   // League icon fallback system
   const getLeagueIcon = (leagueName: string) => {
     const name = leagueName.toLowerCase();
@@ -105,7 +111,7 @@ const ScheduleMatchCard: React.FC<ScheduleMatchCardProps> = ({ match }) => {
           <div className="text-right text-sm text-gray-400">
             <div className="font-medium">{match.blockName}</div>
             {match.strategy && (
-              <div className="text-xs">{match.strategy.type} of {match.strategy.count}</div>
+              <div className="text-xs">{formatStrategyType(match.strategy.type)} {match.strategy.count}</div>
             )}
           </div>
         </div>
@@ -203,7 +209,7 @@ const ScheduleMatchCard: React.FC<ScheduleMatchCardProps> = ({ match }) => {
             <div className="pt-3 mt-3 border-t border-gray-600">
               <div className="flex justify-center text-xs text-gray-400">
                 <span className="bg-gray-700/50 px-3 py-1 rounded-full">
-                  {match.strategy.type} of {match.strategy.count} Series
+                  {formatStrategyType(match.strategy.type)} {match.strategy.count} Series
                 </span>
               </div>
             </div>

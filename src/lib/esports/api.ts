@@ -141,12 +141,22 @@ class EsportsAPI {
     const searchParams = new URLSearchParams(params);
     const url = `${MATCH_DETAILS_BASE}/window/${gameId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
     
+    console.log(`🌐 [API] Fetching live game stats from: ${url}`);
+    
     const response = await fetch(url);
+    
+    console.log(`📡 [API] Response status: ${response.status} ${response.statusText}`);
+    
     if (!response.ok) {
-      throw new Error(`Live game stats request failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`❌ [API] Error response body:`, errorText);
+      throw new Error(`Live game stats request failed: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    console.log(`✅ [API] Successfully fetched game stats, data keys:`, Object.keys(data));
+    
+    return data;
   }
 
   async getLiveGameDetails(gameId: number, startingTime?: string, participantIds?: string) {
@@ -157,12 +167,22 @@ class EsportsAPI {
     const searchParams = new URLSearchParams(params);
     const url = `${MATCH_DETAILS_BASE}/details/${gameId}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
     
+    console.log(`🌐 [API] Fetching live game details from: ${url}`);
+    
     const response = await fetch(url);
+    
+    console.log(`📡 [API] Details response status: ${response.status} ${response.statusText}`);
+    
     if (!response.ok) {
-      throw new Error(`Live game details request failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`❌ [API] Error response body:`, errorText);
+      throw new Error(`Live game details request failed: ${response.status} - ${errorText}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    console.log(`✅ [API] Successfully fetched game details`);
+    
+    return data;
   }
 
   async getMatchWindow(gameId: number, startingTime?: string) {
@@ -236,7 +256,8 @@ class EsportsAPI {
       type: event.type || '',
       blockName: event.blockName || event.league?.name || 'Unknown',
       strategy: event.match?.strategy as Match['strategy'],
-      teams: (event.match?.teams || event.teams) as Match['teams']
+      teams: (event.match?.teams || event.teams) as Match['teams'],
+      games: (event.match as { games?: Match['games'] })?.games
     };
 
     // Create an extended match object with additional properties
@@ -256,10 +277,17 @@ class EsportsAPI {
       const response = await this.getLive();
       const allEvents = (response.data?.schedule?.events || []) as RawEsportsEvent[];
       
+      console.log('🔍 [ESPORTS API] Total events from getLive():', allEvents.length);
+      
       // Filter for events that are currently in progress (both matches and shows)
       const liveEvents = allEvents.filter((event: RawEsportsEvent) => 
         event.state === 'inProgress' && (event.type === 'match' || event.type === 'show')
       );
+      
+      console.log('🔴 [ESPORTS API] Live events (inProgress):', liveEvents.length);
+      liveEvents.forEach((event, idx) => {
+        console.log(`  ${idx + 1}. Type: ${event.type}, ID: ${event.id}, State: ${event.state}`);
+      });
       
       // For live matches, try to get detailed game information
       const enrichedEvents = await Promise.all(liveEvents.map(async (event: RawEsportsEvent) => {
@@ -268,32 +296,62 @@ class EsportsAPI {
         // If it's a live match, try to get game details
         if (event.type === 'match' && event.id) {
           try {
+            console.log(`📊 [ESPORTS API] Fetching details for match event ${event.id}...`);
             const eventDetails = await this.getEventDetails(parseInt(event.id));
             const games = (eventDetails.data?.event?.match?.games || []) as { id?: string; state?: string; [key: string]: unknown }[];
+            
+            console.log(`  Found ${games.length} games for event ${event.id}`);
+            games.forEach((game, idx) => {
+              console.log(`    Game ${idx + 1}: ID=${game.id}, State=${game.state}`);
+            });
+            
             const liveGame = games.find((game) => game.state === 'inProgress');
             
             if (liveGame && liveGame.id) {
+              console.log(`  ✅ Found live game! ID: ${liveGame.id}, attempting to fetch stats...`);
+              
               const [gameStats, gameDetails] = await Promise.all([
-                this.getLiveGameStats(parseInt(liveGame.id)),
-                this.getLiveGameDetails(parseInt(liveGame.id)).catch(() => null)
+                this.getLiveGameStats(parseInt(liveGame.id)).catch(err => {
+                  console.error(`  ❌ Failed to get game stats for game ${liveGame.id}:`, err.message);
+                  return null;
+                }),
+                this.getLiveGameDetails(parseInt(liveGame.id)).catch(err => {
+                  console.error(`  ⚠️ Failed to get game details for game ${liveGame.id}:`, err.message);
+                  return null;
+                })
               ]);
+              
+              if (gameStats) {
+                console.log(`  ✅ Successfully fetched game stats for game ${liveGame.id}`);
+                console.log('  Stats structure:', Object.keys(gameStats));
+                if (gameStats.gameMetadata) {
+                  console.log('    Has gameMetadata:', Object.keys(gameStats.gameMetadata));
+                }
+              }
+              
+              if (gameDetails) {
+                console.log(`  ✅ Successfully fetched game details for game ${liveGame.id}`);
+              }
               
               const extendedTransformed = transformed as Match & Record<string, unknown>;
               extendedTransformed.liveGameStats = gameStats;
               extendedTransformed.liveGameDetails = gameDetails;
               extendedTransformed.currentGame = liveGame;
+            } else {
+              console.log(`  ⚠️ No live game found for event ${event.id}`);
             }
           } catch (error) {
-            console.warn(`Failed to get live game stats for event ${event.id}:`, error);
+            console.error(`❌ [ESPORTS API] Failed to get live game stats for event ${event.id}:`, error);
           }
         }
         
         return transformed;
       }));
       
+      console.log(`🎮 [ESPORTS API] Returning ${enrichedEvents.length} enriched events`);
       return enrichedEvents;
     } catch (error) {
-      console.error('Failed to fetch live matches:', error);
+      console.error('❌ [ESPORTS API] Failed to fetch live matches:', error);
       return [];
     }
   }
@@ -456,6 +514,16 @@ export interface Match {
       wins: number;
       losses: number;
     };
+  }[];
+  games?: {
+    number: number;
+    id: string;
+    state: 'unstarted' | 'inProgress' | 'completed';
+    teams: {
+      id: string;
+      side: 'blue' | 'red';
+    }[];
+    vods?: unknown[];
   }[];
 }
 

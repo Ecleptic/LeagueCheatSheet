@@ -19,6 +19,12 @@ interface ExtendedMatch extends Match {
 }
 
 const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
+  // Helper function to format strategy type (bestOf -> Best of)
+  const formatStrategyType = (type: string): string => {
+    if (type === 'bestOf') return 'Best of';
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
   // League icon fallback system
   const getLeagueIcon = (leagueName: string) => {
     const name = leagueName.toLowerCase();
@@ -145,7 +151,7 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
               )}
               {match.strategy && (
                 <span className="text-xs bg-blue-900/30 text-blue-300 px-2 py-0.5 rounded">
-                  {match.strategy.type} {match.strategy.count}
+                  {formatStrategyType(match.strategy.type)} {match.strategy.count}
                 </span>
               )}
             </div>
