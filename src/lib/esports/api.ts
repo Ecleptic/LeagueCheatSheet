@@ -132,7 +132,7 @@ class EsportsAPI {
   }
 
   // Live game statistics endpoints
-  async getLiveGameStats(gameId: number, startingTime?: string) {
+  async getLiveGameStats(gameId: string | number, startingTime?: string) {
     const params: Record<string, string> = {};
     if (startingTime) {
       params.startingTime = startingTime;
@@ -159,7 +159,7 @@ class EsportsAPI {
     return data;
   }
 
-  async getLiveGameDetails(gameId: number, startingTime?: string, participantIds?: string) {
+  async getLiveGameDetails(gameId: string | number, startingTime?: string, participantIds?: string) {
     const params: Record<string, string> = {};
     if (startingTime) params.startingTime = startingTime;
     if (participantIds) params.participantIds = participantIds;
@@ -315,17 +315,37 @@ class EsportsAPI {
               console.log(`    Game ${idx + 1}: ID=${game.id}, State=${game.state}`);
             });
             
-            const liveGame = games.find((game) => game.state === 'inProgress');
+            let liveGame = games.find((game) => game.state === 'inProgress');
+            
+            // If no game is marked as inProgress, try to find which game has live data
+            // by checking the window API for each game
+            if (!liveGame && games.length > 0) {
+              console.log(`  🔍 No game marked inProgress, checking window API for each game...`);
+              for (const game of games) {
+                if (game.id) {
+                  try {
+                    const stats = await this.getLiveGameStats(game.id);
+                    if (stats && stats.frames && stats.frames.length > 0) {
+                      console.log(`  ✅ Found live data for game ${game.id}!`);
+                      liveGame = game;
+                      break;
+                    }
+                  } catch (err) {
+                    // Game doesn't have live data, continue
+                  }
+                }
+              }
+            }
             
             if (liveGame && liveGame.id) {
-              console.log(`  ✅ Found live game! ID: ${liveGame.id}, attempting to fetch stats...`);
+              console.log(`  ✅ Using game ID: ${liveGame.id}, fetching stats...`);
               
               const [gameStats, gameDetails] = await Promise.all([
-                this.getLiveGameStats(parseInt(liveGame.id)).catch(err => {
+                this.getLiveGameStats(liveGame.id).catch(err => {
                   console.error(`  ❌ Failed to get game stats for game ${liveGame.id}:`, err.message);
                   return null;
                 }),
-                this.getLiveGameDetails(parseInt(liveGame.id)).catch(err => {
+                this.getLiveGameDetails(liveGame.id).catch(err => {
                   console.error(`  ⚠️ Failed to get game details for game ${liveGame.id}:`, err.message);
                   return null;
                 })
@@ -347,6 +367,7 @@ class EsportsAPI {
               extendedTransformed.liveGameStats = gameStats;
               extendedTransformed.liveGameDetails = gameDetails;
               extendedTransformed.currentGame = liveGame;
+              extendedTransformed.isCurrentGameLive = true; // We found live data
             } else {
               console.log(`  ⚠️ No live game found for event ${matchId}`);
             }
