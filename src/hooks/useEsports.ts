@@ -44,7 +44,17 @@ export function useEsportsLive() {
           setLoading(true);
         }
         
-        const data = await esportsApi.getCurrentLiveMatches();
+        // Call our Next.js API route instead of client-side API
+        const response = await fetch('/api/esports/live');
+        
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        const data = result.matches || [];
+        
+        console.log('🔄 [useEsportsLive] Received', data.length, 'matches from API');
         
         // Always update if data exists - stats should update every 30 seconds
         // Only skip update if both old and new are empty (no matches)
