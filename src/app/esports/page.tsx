@@ -78,8 +78,7 @@ export default function EsportsPage() {
             
             {liveError && (
               <ErrorMessage 
-                message={liveError} 
-                onRetry={() => window.location.reload()} 
+                message={liveError}
               />
             )}
             
@@ -150,8 +149,7 @@ export default function EsportsPage() {
             
             {scheduleError && (
               <ErrorMessage 
-                message={scheduleError} 
-                onRetry={() => window.location.reload()} 
+                message={scheduleError}
               />
             )}
             
@@ -186,8 +184,7 @@ export default function EsportsPage() {
             
             {resultsError && (
               <ErrorMessage 
-                message={resultsError} 
-                onRetry={() => window.location.reload()} 
+                message={resultsError}
               />
             )}
             
@@ -225,7 +222,6 @@ export default function EsportsPage() {
             {standingsError && (
               <ErrorMessage 
                 message={standingsError}
-                onRetry={() => window.location.reload()} 
               />
             )}
 

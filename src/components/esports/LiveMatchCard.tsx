@@ -2,10 +2,14 @@
 
 import React, { useState, memo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Match } from '@/lib/esports/api';
 import { getLeagueIcon, ESPORTS_CONFIG } from '@/lib/esports/config';
 import LiveGameStats from './LiveGameStats';
 import EmbeddedStreamPlayer from './EmbeddedStreamPlayer';
+import { LiveGameStatsView } from './LiveGameStatsView';
+import { LiveEventWatcher } from './LiveEventWatcher';
+import { useLiveGameStats } from '@/hooks/useEsports';
 
 interface LiveMatchCardProps {
   match: Match;
@@ -24,6 +28,7 @@ interface StreamData {
 const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
   const [showStream, setShowStream] = useState(true); // Auto-show stream by default
   const [isTheatreMode, setIsTheatreMode] = useState(false); // Theatre mode for stats
+  const [showDetailedStats, setShowDetailedStats] = useState(false); // Show comprehensive stats view
   
   // Debug: Log match data to see what we're receiving
   React.useEffect(() => {
@@ -175,9 +180,20 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
   const liveGameStats = rawMatch.liveGameStats;
   const currentGame = rawMatch.currentGame;
   const gamesSummary = getGamesSummary();
+  
+  // Get game ID and events for detailed stats
+  const gameId = (currentGame as { id?: string })?.id;
+  const { events } = useLiveGameStats(gameId || '');
+  
+  // Get team names for event notifications
+  const blueTeam = match.teams?.[0];
+  const redTeam = match.teams?.[1];
 
   return (
     <div className="bg-riot-gray/50 rounded-lg border border-gray-600 overflow-hidden hover:border-riot-blue/50 transition-colors">
+      {/* Event Notifications */}
+      {gameId && <LiveEventWatcher events={events} blueTeamName={blueTeam?.name} redTeamName={redTeam?.name} />}
+      
       {/* Match Header */}
       <div className="p-4 border-b border-gray-600">
         <div className="flex items-center justify-between mb-2">
@@ -465,6 +481,50 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
               gameDetails={rawMatch.liveGameDetails as unknown as Parameters<typeof LiveGameStats>[0]['gameDetails']}
               currentGame={currentGame as unknown as Parameters<typeof LiveGameStats>[0]['currentGame']} 
             />
+            
+            {/* Toggle Detailed Stats Button */}
+            {gameId && (
+              <div className="mt-3 text-center space-y-3">
+                <button
+                  onClick={() => setShowDetailedStats(!showDetailedStats)}
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-riot-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
+                >
+                  <span>{showDetailedStats ? '📊' : '📈'}</span>
+                  <span>{showDetailedStats ? 'Hide' : 'Show'} Detailed Stats</span>
+                  <span className="text-xs opacity-75">
+                    {showDetailedStats ? '(Collapse)' : '(Charts, Items, Events)'}
+                  </span>
+                </button>
+                
+                {!showDetailedStats && (
+                  <div className="text-xs text-gray-400">
+                    Real-time gold chart, detailed player stats, and event notifications
+                  </div>
+                )}
+                
+                {/* Also provide link to dedicated page */}
+                <Link 
+                  href={`/esports/live/${gameId}`}
+                  className="text-xs text-riot-gold hover:text-riot-blue transition-colors inline-flex items-center gap-1"
+                >
+                  <span>🔗</span>
+                  <span>Open in dedicated page</span>
+                </Link>
+              </div>
+            )}
+            
+            {/* Detailed Stats View - Expandable */}
+            {showDetailedStats && gameId && (
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <LiveGameStatsView 
+                  gameId={gameId}
+                  blueTeamName={blueTeam?.name}
+                  redTeamName={redTeam?.name}
+                  blueTeamLogo={blueTeam?.image}
+                  redTeamLogo={redTeam?.image}
+                />
+              </div>
+            )}
           </div>
         ) : currentGame && !rawMatch.isCurrentGameLive ? (
           <div className="mt-3 text-center py-4 bg-gradient-to-br from-riot-dark/80 to-riot-gray/50 rounded border border-gray-600">
