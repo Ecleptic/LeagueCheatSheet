@@ -1,6 +1,6 @@
 # Live Esports Stats Feature
 
-Comprehensive live game statistics viewer inspired by [AndyDanger/live-lol-esports](https://github.com/AndyDanger/live-lol-esports), featuring real-time data updates, event notifications, and full mobile responsiveness.
+Comprehensive live game statistics viewer inspired by [AndyDanger/live-lol-esports](https://github.com/AndyDanger/live-lol-esports) ([Live Demo](https://andydanger.github.io/live-lol-esports/)), featuring real-time data updates, event notifications, and full mobile responsiveness.
 
 ## 🎯 What We Built
 
@@ -205,7 +205,7 @@ None currently! All TypeScript compilation passes without errors.
 
 ## 📝 Credits
 
-- Inspired by [AndyDanger/live-lol-esports](https://github.com/AndyDanger/live-lol-esports)
+- Inspired by [AndyDanger/live-lol-esports](https://github.com/AndyDanger/live-lol-esports) ([Live Demo](https://andydanger.github.io/live-lol-esports/))
 - Powered by Riot Games LoL Esports API
 - Built with Next.js, React, TypeScript, Tailwind CSS
 - Toast notifications via react-toastify

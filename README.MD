@@ -1,78 +1,147 @@
-# League of Legends Cheat Sheet
+# League of Legends Spectator Guide
 
-A comprehensive **Next.js Progressive Web App (PWA)** for League of Legends players featuring champions, summoner spells, and items data. Built with mobile-first design and offline functionality.
+**Your quick reference companion for watching League of Legends esports** 🎮📺
 
-## 🚀 Features
+A comprehensive **Next.js Progressive Web App (PWA)** designed to help new viewers understand what's happening in professional League matches. Whether you're watching LCS, LCK, or Worlds, this app helps you quickly look up champions, items, abilities, and follow live matches in real-time.
 
-### Multi-Tab Navigation
-- **Champions**: Browse all champions with favorites system and ability videos
-- **Summoner Spells**: Complete summoner spell database
-- **Items**: Comprehensive item catalog with stats and build information
-- **Teams**: Complete multi-step team builder with configuration management (✅ Phase 3 Complete)
-- **Esports**: Live matches, schedules, and professional League data (✅ Complete)
+## 🎯 Purpose
 
-### Champion Management
-- **Champion List**: All champions displayed in alphabetical order
-- **Favorites System**: 
-  - Favorite/unfavorite champions with persistent storage
-  - Favorited champions displayed prominently at top
-  - Personal notes and player name tracking for favorited champions
-- **Champion Details**: Detailed modal view with:
-  - Champion images (portrait, loading screen, splash art)
-  - Lore and gameplay description
-  - All abilities with icons and detailed descriptions
-  - **Ability Videos**: Interactive video player for each ability (P/Q/W/E/R)
-    - Custom tap-to-play/pause controls with SVG icons
-    - Official 1056x720 aspect ratio maintained
-    - Ability icons used as video thumbnails
-    - Full-width responsive layout
-  - Champion statistics and tags
-  - External guide links (Mobalytics integration)
+**Not a player guide** - This is specifically built for **spectators and new esports fans** who want to:
+- Understand what champions and their abilities do
+- Learn what items players are building and why
+- Follow live professional matches with detailed stats
+- Decode esports terminology and strategies
+- Get instant answers during matches without leaving the stream
 
-### Summoner Spells & Items
-- **Summoner Spells**: Complete spell database with descriptions and cooldowns
-- **Items**: Full item catalog with:
-  - Item stats and gold costs
-  - Build paths and item tags
-  - Searchable by name, description, or tags
-  - Tap-away modal closing for mobile optimization
+Perfect for friends, family, or newcomers trying to understand what the casters are talking about!
 
-### Teams & Configuration Management
-- **Multi-Step Team Builder**: Comprehensive 4-step team setup process
-  - **Step 1**: Team names configuration
-  - **Step 2**: Player names and position assignment
-  - **Step 3**: Champion selection with duplicate prevention
-  - **Step 4**: Summoner spell assignment
-- **Professional UI System**: 
-  - Riot-themed design matching League of Legends aesthetic
-  - Modern modal system replacing browser alerts
-  - Toast notification system (success/error/info/warning)
-- **Configuration Management**:
-  - Save/load team configurations with persistent storage
-  - Reset functionality returning to step 1
-  - Visual configuration browser with metadata
-- **Cross-Browser Compatibility**: 
-  - Fixed Firefox-specific navigation issues
-  - Consistent behavior across Safari, Chrome, and Firefox
+## 🚀 Key Features
 
-### Offline & Performance
-- **PWA Features**: Installable app with offline support
-- **Smart Caching**: 24-hour cache with manual refresh capability
-- **Local Storage**: Favorites and data persistence
-- **Mobile Optimized**: Touch-friendly interface designed for phones
+### 📺 Live Match Tracking (`/esports`)
+**Follow professional matches in real-time:**
+- **Live Game Stats**: Real-time gold difference charts, objectives, and player stats
+- **Expandable Details**: Click "Show Detailed Stats" on any live match to see:
+  - Gold difference visualization with team comparison
+  - Dragon tracking (which team got which dragons)
+  - Tower, baron, and inhibitor counts
+  - Individual player stats: K/D/A, CS, gold, items
+  - Champion images and health bars
+- **Event Notifications**: Toast alerts for first blood, kills, objectives, and major events
+- **Schedule & Results**: Upcoming matches and recent game results
+- **League Standings**: Current tournament tables and team rankings
+- **Mobile Optimized**: Tab navigation for easy viewing on phones
+
+### 🏆 Champion Reference (Main Page)
+**Quickly understand what champions do:**
+- **Browse All Champions**: Alphabetical list with search
+- **Ability Videos**: Watch what each ability (P/Q/W/E/R) actually does
+  - Tap-to-play video demonstrations
+  - See the visual effects and range
+  - Perfect for "What did that champion just do?" moments
+- **Favorites System**: Star champions you see often to access them faster
+- **Champion Details**: 
+  - All ability descriptions and cooldowns
+  - Passive effects explained
+  - Champion role and playstyle tags
+  - External guides for deeper learning
+
+### 🎒 Item Database
+**Understand item builds and power spikes:**
+- **Item Catalog**: Every item with stats and gold costs
+- **Build Paths**: See what items build into (e.g., "Why is the ADC buying that component?")
+- **Search & Filter**: Find items by name or effect
+- **Quick Reference**: Tap an item to see full stats and description
+- **Build Analysis**: Understand why pros build certain items
+
+### ⚡ Summoner Spells
+**Know what spells do and their cooldowns:**
+- Complete spell database (Flash, Teleport, Ignite, etc.)
+- Cooldown timers (important for understanding windows of opportunity)
+- Effect descriptions in plain language
+
+### 📖 Esports Terminology Guide
+**Coming Soon**: Common terms explained:
+- ADC, Support, Jungle, Mid, Top (Positions)
+- CS (Creep Score), Gold Difference, Vision Control
+- Dragon Soul, Baron Buff, Elder Dragon
+- Split Push, Team Fight, Siege, Poke
+- First Blood, Ace, Pentakill
+- Draft, Ban Phase, Blue/Red Side
+
+### 📱 Spectator-Friendly Design
+- **Dual Screen Setup**: Keep this open on your phone/tablet while watching on TV
+- **Quick Lookups**: Find info in seconds, get back to the action
+- **No Game Knowledge Required**: Everything explained for newcomers
+- **Offline Support**: Works without internet (after first load)
+- **PWA Install**: Add to home screen for instant access during streams
+
+## � Common Use Cases
+
+### During a Live Match
+**"What does that champion do?"**
+→ Open Champions tab, search for the champion, watch ability videos
+
+**"Why is everyone excited about Dragon Soul?"**
+→ Check the live stats to see which dragons each team has taken
+
+**"What items is the ADC building?"**
+→ Expand the detailed stats to see real-time item builds
+
+**"Who's winning?"**
+→ Check the gold difference chart in the live match view
+
+**"What's the score in this series?"**
+→ Look at the match card to see game wins (e.g., 2-1)
+
+### Between Games
+**"I keep hearing about [champion name]"**
+→ Add them to favorites for quick access next time
+
+**"What does Flash do again?"**
+→ Quick check in Summoner Spells tab
+
+**"When are the next matches?"**
+→ Switch to Schedule tab in /esports
+
+### Learning Over Time
+- Favorite the 20-30 most-played champions in pro play
+- Watch ability videos once, remember what they look like
+- Learn item names by checking builds during matches
+- Track your favorite team's standings
 
 ## 🛠 Technical Stack
 
-- **Framework**: Next.js 15.5.4 with App Router
-- **Language**: TypeScript with strict type checking
-- **Styling**: Tailwind CSS with custom design system
-- **PWA**: Next-PWA for offline functionality
-- **API**: Riot Games Data Dragon API (no keys required)
-- **Storage**: Browser localStorage for caching and favorites
+- **Framework**: Next.js 15.5.4 (Fast, modern, works offline)
+- **Data Source**: Riot Games Official API (always up-to-date)
+- **Live Stats**: Real-time esports data from Riot's livestats API
+- **PWA**: Installable app that works offline
+- **Mobile First**: Designed for phone/tablet viewing alongside streams
+
+## 🚀 Quick Start Guide
+
+### For Spectators
+
+1. **Visit the App**: `http://localhost:3001` (or deployed URL)
+2. **First Time Setup**:
+   - Browse Champions tab and favorite 5-10 you see often
+   - Check out ability videos for popular picks
+3. **During Matches**:
+   - Open `/esports` page
+   - Click "Show Detailed Stats" on live matches
+   - Keep app open on phone while watching stream
+4. **Learning**:
+   - Look up unfamiliar champions during loading screen
+   - Check item builds when casters mention them
+   - Watch ability videos after seeing cool plays
+
+### Keyboard Shortcuts (Coming Soon)
+- `Space`: Quick search
+- `ESC`: Close modals
+- `Tab`: Navigate sections
 
 ## 🏗 Development
 
-### Getting Started
+### For Developers
 ```bash
 # Install dependencies
 npm install
@@ -90,17 +159,28 @@ npx tsc --noEmit
 ### Project Structure
 ```
 src/
-├── app/                 # Next.js App Router
-├── components/          # React components
-│   ├── teams/          # Team builder components (MultiStepTeamBuilder, TeamView, etc.)
-│   ├── esports/        # Professional League components
-│   ├── modals/         # Modern modal system (ConfirmationModal, InputModal, etc.)
-│   └── ui/             # UI components (ToastContainer, etc.)
-├── hooks/              # Custom React hooks
-├── lib/                # Utilities and API services
-├── types/              # TypeScript type definitions
-└── contexts/           # React context providers
+├── app/                 # Next.js App Router pages
+│   ├── esports/        # Live match tracking (/esports)
+│   └── page.tsx        # Champions, items, spells (/)
+├── components/
+│   ├── esports/        # Live stats, match cards, event notifications
+│   ├── modals/         # Modal system for details
+│   └── ui/             # Reusable UI components
+├── hooks/              # Data fetching and state management
+│   └── useEsports.ts   # Live match polling and events
+├── lib/                # API clients and utilities
+│   ├── esports/        # Riot esports API integration
+│   └── riot-api.ts     # Data Dragon API client
+└── types/              # TypeScript definitions
+    └── esports.ts      # Live match data types
 ```
+
+### Key Technologies
+- **Next.js 15**: React framework with App Router
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling
+- **React Hooks**: State management and data fetching
+- **PWA**: Offline-first progressive web app
 
 ## 🌐 API Integration
 
@@ -135,81 +215,42 @@ GET https://ddragon.leagueoflegends.com/api/versions.json
 | Summoner Spell Icons | `/cdn/{VERSION}/img/spell/{SpellImage}.png` |
 | Item Icons | `/cdn/{VERSION}/img/item/{ItemImage}.png` |
 
-## 📋 Current TODOs & Action Items
+## 🎯 Roadmap - Spectator Features
 
-### 🔥 High Priority - Active Development
-- ✅ **Esports Tab Completion** (`src/app/esports/page.tsx`) - **COMPLETED**:
-  - ✅ Imported and implemented StandingsTable component
-  - ✅ Added standings functionality with league tables
-  - ✅ Completed standings tab integration with proper error handling
-  - ✅ Code organization with type definitions and configuration files
+### ✅ Completed
+- **Live Match Tracking**: Real-time stats with gold charts and event notifications
+- **Champion Reference**: All champions with ability videos
+- **Item Database**: Complete catalog with build paths
+- **Esports Schedule**: Upcoming matches and results
+- **League Standings**: Tournament tables and rankings
+- **Mobile Optimization**: Touch-friendly interface for dual-screen viewing
 
-- ✅ **Teams Tab Phase 3** (`src/components/teams/TeamView.tsx`) - **COMPLETED**:
-  - ✅ Complete multi-step team builder implementation
-  - ✅ Professional UI system with riot-themed design
-  - ✅ Configuration save/load/reset system
-  - ✅ Modern modal system replacing browser alerts
-  - ✅ Cross-browser compatibility (Firefox navigation fix)
-  - ✅ Toast notification system integration
+### 🚧 In Progress
+- **Esports Terminology Guide**: Common terms and concepts explained
+- **SVG Icons**: Replace emojis with proper dragon/baron/objective icons
+- **Stream Integration**: Embed Twitch/YouTube streams alongside stats
 
-### 🎯 Medium Priority - Code Quality
-- ✅ **Code Organization** - **COMPLETED**:
-  - ✅ Moved esports interfaces to dedicated `/types` directory
-  - ✅ Extracted static URLs to configuration files
-  - ✅ Added proper TypeScript organization with esports config
-  - ✅ Modern component architecture with modal system
+### 📋 Future Enhancements
 
-- ✅ **UI/UX Modernization** - **COMPLETED**:
-  - ✅ Eliminated all browser alerts in favor of in-app modals
-  - ✅ Implemented professional toast notification system
-  - ✅ Riot-themed button design matching site aesthetic
-  - ✅ Tap-away modal functionality for mobile optimization
+#### Spectator-Focused Features
+- [ ] **Champion Role Guide**: Understanding positions (Top, Jungle, Mid, ADC, Support)
+- [ ] **Item Timing Explained**: What "power spikes" mean and when they happen
+- [ ] **Draft Phase Guide**: Understanding pick/ban strategy
+- [ ] **Meta Snapshot**: Which champions are popular in current patch
+- [ ] **Team Composition Analysis**: Understanding team fight vs. split push comps
+- [ ] **Objective Timer Guide**: When dragon/baron spawns and respawns
 
-- [ ] **Build Algorithm Enhancement** (`src/utils/buildPathAlgorithms.ts`):
-  - Implement item alternatives logic for better recommendations
-  - Add situational build suggestions
-  - Add JSDoc comments to API functions
+#### Enhanced Learning Tools
+- [ ] **Pro Player Profiles**: See what champions specific pros are known for
+- [ ] **Historical Match Archive**: Look up past tournament games
+- [ ] **Patch Notes Simplified**: Understanding what changed (for spectators)
+- [ ] **Champion Matchup Guide**: Why certain picks counter others
 
-### 🚀 Future Features - Next Phase
-- [ ] **Advanced Team Analysis Tools**:
-  - Team composition analysis and insights  
-  - Build recommendation algorithms
-  - Win condition identification
-
-- [ ] **Enhanced Item Building**:
-  - Live gold tracking during games
-  - Item build path visualization
-  - Situational item suggestions
-
-- [ ] **Professional Integration**:
-  - Professional match analysis integration with team builds
-  - Meta trend analysis and recommendations
-  - Tournament bracket planning tools
-
-## 📋 Roadmap & TODOs
-
-### Immediate Improvements
-- [ ] Enhanced search with filtering options
-- [ ] Item build paths visualization
-
-### Future Features: Players Tab
-A comprehensive team management system:
-
-#### Core Features
-- [ ] **Team Setup**: 6 players per team (Red vs Blue)
-- [ ] **Player Management**: 
-  - Custom player names
-  - Champion selection per player
-  - Summoner spell assignment
-- [ ] **Live Item Building**:
-  - Real-time item building during games
-  - Item upgrade suggestions
-  - Build path recommendations
-  - Interactive item trees
-
-#### Technical Considerations
-- [ ] Investigate item build tree data from API
-- [ ] Real-time state management for live games
+#### Quality of Life
+- [ ] **Multi-Language Support**: Watch streams in any language, read guides in yours
+- [ ] **Dark/Light Mode**: Better viewing in different lighting
+- [ ] **Comparison Tool**: Side-by-side champion/item comparisons
+- [ ] **Quick Notes**: Save observations about players or strategies
 - [ ] Team composition analysis
 - [ ] Save/load team configurations
 
@@ -221,6 +262,26 @@ This project uses:
 - **Prettier** for code formatting
 - **Tailwind CSS** for consistent styling
 
-## 📝 License
+## � Credits & Resources
+
+### Inspiration
+This project's live stats feature was inspired by:
+- **[AndyDanger/live-lol-esports](https://github.com/AndyDanger/live-lol-esports)** - Original live stats implementation
+- **[Live Demo](https://andydanger.github.io/live-lol-esports/)** - See the original project in action
+
+### API Resources
+- **[Riot Games Data Dragon](https://developer.riotgames.com/docs/lol#data-dragon)** (`ddragon.leagueoflegends.com`) - Champion, item, and spell data with images
+- **[LoL Esports API](https://vickz84259.github.io/lolesports-api-docs/)** (`esports-api.lolesports.com`) - Schedules, standings, and results
+- **[LoL Esports Live Stats API](https://feed.lolesports.com/livestats/v1)** - Real-time match data (window & details endpoints)
+- **[Community Dragon](https://raw.communitydragon.org/latest/)** - Champion positions and role data
+- **[Static LoL Esports](https://static.lolesports.com/)** - League logos and tournament assets
+
+### Libraries & Tools
+- **[react-toastify](https://github.com/fkhadra/react-toastify)** - Event notification system
+- **[next-pwa](https://github.com/shadowwalker/next-pwa)** - Progressive Web App support for offline viewing
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first styling framework
+- **[Workbox](https://developer.chrome.com/docs/workbox/)** - Service worker for caching (via next-pwa)
+
+## �📝 License
 
 This project is for educational purposes. League of Legends is a trademark of Riot Games, Inc.
