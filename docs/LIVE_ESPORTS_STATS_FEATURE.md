@@ -38,6 +38,9 @@ Real-time toast notifications using react-toastify for:
 ### 4. **Live Stats Hook** (`useLiveGameStats`)
 Robust data polling system:
 - Fetches window data every 1 second (team stats)
+
+### 5. **Terminology & Phrases** (`/terms`)
+A searchable glossary for spectators that explains common esports jargon, provides examples, and lists related phrases to help new viewers keep up with casters and chat.
 - Fetches details data every 3 seconds (player items/stats)
 - Automatic event detection for notifications
 - Returns structured data: `latestFrame`, `firstFrame`, `gameMetadata`, `detailsData`, `events`

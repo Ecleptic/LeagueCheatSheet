@@ -17,6 +17,17 @@ import React, { useEffect, useRef } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GameEvent } from '@/types/esports';
+import FirstBlood from '@/components/icons/FirstBlood';
+import Tower from '@/components/icons/Tower';
+import Inhibitor from '@/components/icons/Inhibitor';
+import Baron from '@/components/icons/Baron';
+import DragonCloud from '@/components/icons/DragonCloud';
+import DragonInfernal from '@/components/icons/DragonInfernal';
+import DragonMountain from '@/components/icons/DragonMountain';
+import DragonOcean from '@/components/icons/DragonOcean';
+import DragonHextech from '@/components/icons/DragonHextech';
+import DragonChemtech from '@/components/icons/DragonChemtech';
+import DragonElder from '@/components/icons/DragonElder';
 
 interface LiveEventWatcherProps {
   events: GameEvent[];
@@ -43,52 +54,83 @@ export function LiveEventWatcher({
       // Mark as processed
       processedEvents.current.add(eventKey);
 
-      // Get team name
-      const teamName = event.team === 'blue' ? blueTeamName : redTeamName;
-      const teamColor = event.team === 'blue' ? '🔵' : '🔴';
+  // Get team name
+  const teamName = event.team === 'blue' ? blueTeamName : redTeamName;
+  const teamColorIcon = event.team === 'blue' ? <span className="inline-block w-4 h-4 bg-blue-500 rounded-full mr-2" /> : <span className="inline-block w-4 h-4 bg-red-500 rounded-full mr-2" />;
 
       // Display appropriate notification
       switch (event.type) {
         case 'first_blood':
-          toast.success(`${teamColor} ${teamName} drew FIRST BLOOD! 🩸`, {
-            autoClose: 5000,
-            className: 'toast-first-blood',
-          });
+          toast.success(
+            <div className="flex items-center gap-2">
+              {teamColorIcon}
+              <strong>{teamName}</strong>
+              <span className="ml-2">drew FIRST BLOOD!</span>
+              <FirstBlood className="ml-2 w-4 h-4" />
+            </div>,
+            { autoClose: 5000, className: 'toast-first-blood' }
+          );
           break;
 
         case 'kill':
           if (event.killerName && event.victimName) {
-            toast.info(`${teamColor} ${event.killerName} eliminated ${event.victimName}`, {
-              autoClose: 3000,
-            });
+            toast.info(
+              <div className="flex items-center gap-2">
+                {teamColorIcon}
+                <span>{event.killerName} eliminated {event.victimName}</span>
+                <span className="ml-2"><svg className="w-4 h-4" viewBox="0 0 24 24"><path d="M3 12l6-9 6 9 6-9v14H3V12z" fill="#60A5FA"/></svg></span>
+              </div>,
+              { autoClose: 3000 }
+            );
           }
           break;
 
         case 'tower':
-          toast.warning(`${teamColor} ${teamName} destroyed a tower! 🏰`, {
-            autoClose: 4000,
-          });
+          toast.warning(
+            <div className="flex items-center gap-2">
+              {teamColorIcon}
+              <strong>{teamName}</strong>
+              <span className="ml-2">destroyed a tower!</span>
+              <Tower className="ml-2 w-4 h-4" />
+            </div>,
+            { autoClose: 4000 }
+          );
           break;
 
         case 'inhibitor':
-          toast.error(`${teamColor} ${teamName} destroyed an inhibitor! 🔮`, {
-            autoClose: 5000,
-          });
+          toast.error(
+            <div className="flex items-center gap-2">
+              {teamColorIcon}
+              <strong>{teamName}</strong>
+              <span className="ml-2">destroyed an inhibitor!</span>
+              <Inhibitor className="ml-2 w-4 h-4" />
+            </div>,
+            { autoClose: 5000 }
+          );
           break;
 
         case 'dragon':
-          const dragonEmoji = getDragonEmoji(event.dragonType);
-          toast.info(`${teamColor} ${teamName} slayed ${event.dragonType || 'a'} dragon! ${dragonEmoji}`, {
-            autoClose: 4000,
-            className: 'toast-dragon',
-          });
+          toast.info(
+            <div className="flex items-center gap-2">
+              {teamColorIcon}
+              <strong>{teamName}</strong>
+              <span className="ml-2">slayed {event.dragonType || 'a'} dragon!</span>
+              <span className="ml-2">{getDragonIconNode(event.dragonType)}</span>
+            </div>,
+            { autoClose: 4000, className: 'toast-dragon' }
+          );
           break;
 
         case 'baron':
-          toast.error(`${teamColor} ${teamName} slayed Baron Nashor! 👹`, {
-            autoClose: 5000,
-            className: 'toast-baron',
-          });
+          toast.error(
+            <div className="flex items-center gap-2">
+              {teamColorIcon}
+              <strong>{teamName}</strong>
+              <span className="ml-2">slayed Baron Nashor!</span>
+              <Baron className="ml-2 w-4 h-4" />
+            </div>,
+            { autoClose: 5000, className: 'toast-baron' }
+          );
           break;
 
         default:
@@ -115,20 +157,17 @@ export function LiveEventWatcher({
 }
 
 // Helper function to get appropriate emoji for dragon type
-function getDragonEmoji(dragonType?: string): string {
-  if (!dragonType) return '🐉';
-  
-  const dragonEmojis: Record<string, string> = {
-    'cloud': '☁️',
-    'infernal': '🔥',
-    'mountain': '⛰️',
-    'ocean': '🌊',
-    'chemtech': '☣️',
-    'hextech': '⚡',
-    'elder': '👑',
-  };
-
-  return dragonEmojis[dragonType.toLowerCase()] || '🐉';
+function getDragonIconNode(dragonType?: string): JSX.Element {
+  if (!dragonType) return <DragonCloud className="w-4 h-4" />;
+  const t = dragonType.toLowerCase();
+  if (t.includes('infernal')) return <DragonInfernal className="w-4 h-4" />;
+  if (t.includes('cloud')) return <DragonCloud className="w-4 h-4" />;
+  if (t.includes('ocean')) return <DragonOcean className="w-4 h-4" />;
+  if (t.includes('mountain')) return <DragonMountain className="w-4 h-4" />;
+  if (t.includes('chemtech')) return <DragonChemtech className="w-4 h-4" />;
+  if (t.includes('hextech')) return <DragonHextech className="w-4 h-4" />;
+  if (t.includes('elder')) return <DragonElder className="w-4 h-4" />;
+  return <DragonCloud className="w-4 h-4" />;
 }
 
 // Custom CSS for special toasts (add to global styles or component)

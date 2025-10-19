@@ -12,6 +12,8 @@ import { ChampionSummary } from '@/types/champion';
 import { SummonerSpellSummary } from '@/types/summonerSpell';
 import { Position } from '@/types/team';
 import TeamView from '@/components/teams/TeamView';
+import dynamic from 'next/dynamic';
+const DynamicTerms = dynamic(() => import('@/components/terms/TermsPage'), { ssr: false });
 import { ItemSummary } from '@/hooks/useItems';
 import ChampionCard from '@/components/ChampionCard';
 import ChampionModal from '@/components/modals/ChampionModal';
@@ -21,6 +23,9 @@ import SummonerSpellModal from '@/components/modals/SummonerSpellModal';
 import ItemCard from '@/components/ItemCard';
 import ItemModal from '@/components/modals/ItemModal';
 import PositionIcon from '@/components/PositionIcon';
+import StatsIcon from '@/components/icons/StatsIcon';
+import SpellIcon from '@/components/icons/SpellIcon';
+import TeamIcon from '@/components/icons/TeamIcon';
 
 export default function ChampionsPage() {
   const { champions, loading, error, refreshChampions } = useChampions();
@@ -34,7 +39,7 @@ export default function ChampionsPage() {
   const [selectedItem, setSelectedItem] = useState<ItemSummary | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPosition, setSelectedPosition] = useState<Position | ''>('');
-  const [activeTab, setActiveTab] = useState<'champions' | 'spells' | 'items' | 'teams'>('champions');
+  const [activeTab, setActiveTab] = useState<'champions' | 'spells' | 'items' | 'teams' | 'terms'>('champions');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Filter champions based on search term and position
@@ -154,29 +159,36 @@ export default function ChampionsPage() {
             onClick={() => setActiveTab('champions')}
             className={`flex-1 py-3 text-center ${activeTab === 'champions' ? 'bg-riot-blue text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
           >
-            <div className="text-lg">🏆</div>
+            <div className="text-lg"><StatsIcon className="w-5 h-5" /></div>
             <div className="text-xs">Champions</div>
           </button>
           <button 
             onClick={() => setActiveTab('spells')}
             className={`flex-1 py-3 text-center ${activeTab === 'spells' ? 'bg-riot-blue text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
           >
-            <div className="text-lg">⚔️</div>
+            <div className="text-lg"><SpellIcon className="w-5 h-5" /></div>
             <div className="text-xs">Spells</div>
           </button>
           <button 
             onClick={() => setActiveTab('items')}
             className={`flex-1 py-3 text-center ${activeTab === 'items' ? 'bg-riot-blue text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
           >
-            <div className="text-lg">🛡️</div>
+            <div className="text-lg"><StatsIcon className="w-5 h-5" /></div>
             <div className="text-xs">Items</div>
           </button>
           <button 
             onClick={() => setActiveTab('teams')}
             className={`flex-1 py-3 text-center ${activeTab === 'teams' ? 'bg-riot-blue text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
           >
-            <div className="text-lg">🏛️</div>
+            <div className="text-lg"><TeamIcon className="w-5 h-5" /></div>
             <div className="text-xs">Teams</div>
+          </button>
+          <button 
+            onClick={() => setActiveTab('terms')}
+            className={`flex-1 py-3 text-center ${activeTab === 'terms' ? 'bg-riot-blue text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
+          >
+            <div className="text-lg"><StatsIcon className="w-5 h-5" /></div>
+            <div className="text-xs">Terms</div>
           </button>
         </div>
       </nav>
@@ -188,15 +200,24 @@ export default function ChampionsPage() {
             <h1 className="text-lg font-bold">
               {activeTab === 'champions' ? 'LoL Champions' : 
                activeTab === 'spells' ? 'Summoner Spells' : 
-               activeTab === 'items' ? 'Items' : 'Teams'}
+               activeTab === 'items' ? 'Items' : 
+               activeTab === 'terms' ? 'Terminology & Phrases' : 'Teams'}
             </h1>
             <div className="flex items-center gap-3">
-              <Link 
-                href="/esports"
-                className="px-3 py-1 border border-blue-600 text-white rounded-full text-xs hover:bg-blue-600/10 transition-colors"
-              >
-                🏆 Esports
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link 
+                  href="/esports"
+                  className="px-3 py-1 border border-blue-600 text-white rounded-full text-xs hover:bg-blue-600/10 transition-colors"
+                >
+                  🏆 Esports
+                </Link>
+                <Link 
+                  href="/terms"
+                  className="px-3 py-1 border border-gray-600 text-gray-200 rounded-full text-xs hover:bg-gray-700/10 transition-colors"
+                >
+                  📚 Terms
+                </Link>
+              </div>
               <div className="flex flex-col items-end">
                 <button
                   onClick={handleRefresh}
@@ -233,7 +254,8 @@ export default function ChampionsPage() {
                   placeholder={
                     activeTab === 'champions' ? 'Search champions...' : 
                     activeTab === 'spells' ? 'Search summoner spells...' : 
-                    'Search items...'
+                    activeTab === 'items' ? 'Search items...' : 
+                    activeTab === 'terms' ? 'Search terms and examples...' : ''
                   }
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -400,6 +422,12 @@ export default function ChampionsPage() {
 
         {activeTab === 'teams' && (
           <TeamView />
+        )}
+        {activeTab === 'terms' && (
+          // Dynamically load the Terms page component
+          <React.Suspense fallback={<div className="p-4 text-gray-400">Loading terms...</div>}>
+            <DynamicTerms />
+          </React.Suspense>
         )}
       </main>
 

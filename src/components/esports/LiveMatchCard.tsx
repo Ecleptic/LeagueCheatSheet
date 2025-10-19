@@ -10,6 +10,11 @@ import EmbeddedStreamPlayer from './EmbeddedStreamPlayer';
 import { LiveGameStatsView } from './LiveGameStatsView';
 import { LiveEventWatcher } from './LiveEventWatcher';
 import { useLiveGameStats } from '@/hooks/useEsports';
+import TwitchIcon from '@/components/icons/TwitchIcon';
+import YouTubeIcon from '@/components/icons/YouTubeIcon';
+import LiveBadge from '@/components/icons/LiveBadge';
+import RedDot from '@/components/icons/RedDot';
+import { guessTeamLogo } from '@/lib/esports/teamLogos';
 
 interface LiveMatchCardProps {
   match: Match;
@@ -81,19 +86,19 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
     const providerLower = provider.toLowerCase();
     if (providerLower === 'twitch') {
       return {
-        icon: '📺',
+        icon: <TwitchIcon className="w-5 h-5" />,
         bgColor: 'bg-purple-600 hover:bg-purple-700',
         badgeColor: 'bg-purple-900/20 text-purple-300 border-purple-500/20 hover:bg-purple-800/30 hover:border-purple-400/40'
       };
     } else if (providerLower === 'youtube') {
       return {
-        icon: '▶️',
+        icon: <YouTubeIcon className="w-5 h-5" />,
         bgColor: 'bg-red-600 hover:bg-red-700',
         badgeColor: 'bg-red-900/20 text-red-300 border-red-500/20 hover:bg-red-800/30 hover:border-red-400/40'
       };
     }
     return {
-      icon: '🔴',
+      icon: <RedDot className="w-4 h-4" />,
       bgColor: 'bg-gray-600 hover:bg-gray-700',
       badgeColor: 'bg-gray-900/20 text-gray-300 border-gray-500/20 hover:bg-gray-800/30 hover:border-gray-400/40'
     };
@@ -199,7 +204,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
         <div className="flex items-center justify-between mb-2">
           <div>
             <span className={`px-2 py-1 rounded text-xs font-medium ${stateInfo.color}`}>
-              {match.state === 'inProgress' && '🔴'} {stateInfo.text}
+              {match.state === 'inProgress' && <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2" />} {stateInfo.text}
             </span>
             {match.state === 'inProgress' && (
               <span className="ml-2 text-gray-400 text-sm">
@@ -249,8 +254,9 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
             )}
             <span className="text-sm text-gray-300">{league?.name || ''}</span>
             {flags.includes('hasVod') && (
-              <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded">
-                📺 VOD Available
+              <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded flex items-center gap-1">
+                <TwitchIcon className="w-4 h-4" />
+                VOD Available
               </span>
             )}
             {flags.includes('isSpoiler') && (
@@ -348,7 +354,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
                 <div key={team.id || index} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Image
-                      src={team.image}
+                      src={team.image || guessTeamLogo((team as any).slug || team.name)}
                       alt={team.name}
                       width={32}
                       height={32}
@@ -428,7 +434,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
                       onClick={() => setShowStream(true)}
                       className="bg-riot-blue hover:bg-riot-blue-hover text-white font-medium py-2 px-4 rounded transition-colors"
                     >
-                      📺 Show Embedded Stream
+                      <span className="flex items-center gap-2"><TwitchIcon className="w-4 h-4" /> Show Embedded Stream</span>
                     </button>
                     <div className="mt-2 text-xs text-gray-400">
                       Available in {streams.length} language{streams.length !== 1 ? 's' : ''}
@@ -451,7 +457,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
                     )}
                     {flags.length > 0 && (
                       <div className="flex space-x-2">
-                        {flags.includes('hasVod') && <span>📺</span>}
+                                    {flags.includes('hasVod') && <TwitchIcon className="w-4 h-4" />}
                         {flags.includes('isSpoiler') && <span>⚠️</span>}
                       </div>
                     )}
@@ -468,7 +474,7 @@ const LiveMatchCard: React.FC<LiveMatchCardProps> = ({ match }) => {
             <div className="mb-2 text-center text-xs py-1 px-2 rounded border">
               {rawMatch.isCurrentGameLive ? (
                 <div className="bg-blue-900/20 text-blue-300 border-blue-500/20">
-                  🔴 LIVE - Real-time match data (Game {(currentGame as { number?: number })?.number || '?'})
+                  <span className="flex items-center gap-2"><LiveBadge>LIVE</LiveBadge> Real-time match data (Game {(currentGame as { number?: number })?.number || '?'})</span>
                 </div>
               ) : (
                 <div className="bg-gray-900/20 text-gray-300 border-gray-500/20">

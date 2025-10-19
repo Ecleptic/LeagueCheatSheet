@@ -18,6 +18,17 @@ import React, { useState } from 'react';
 import { useLiveGameStats } from '@/hooks/useEsports';
 import { WindowFrame, TeamStats, WindowParticipant, ParticipantMetadata } from '@/types/esports';
 import Image from 'next/image';
+import StatsIcon from '@/components/icons/StatsIcon';
+import Tower from '@/components/icons/Tower';
+import DragonCloud from '@/components/icons/DragonCloud';
+import DragonInfernal from '@/components/icons/DragonInfernal';
+import DragonMountain from '@/components/icons/DragonMountain';
+import DragonOcean from '@/components/icons/DragonOcean';
+import DragonHextech from '@/components/icons/DragonHextech';
+import DragonChemtech from '@/components/icons/DragonChemtech';
+import DragonElder from '@/components/icons/DragonElder';
+import Baron from '@/components/icons/Baron';
+import Inhibitor from '@/components/icons/Inhibitor';
 
 interface LiveGameStatsViewProps {
   gameId: string | number;
@@ -106,7 +117,10 @@ export function LiveGameStatsView({
                 : 'bg-gray-800 text-gray-400 hover:text-white'
             }`}
           >
-            📊 Stats
+            <span className="flex items-center justify-center gap-2">
+              <StatsIcon className="w-5 h-5" />
+              <span>Stats</span>
+            </span>
           </button>
           <button
             onClick={() => setActiveSection('blue')}
@@ -116,7 +130,10 @@ export function LiveGameStatsView({
                 : 'bg-gray-800 text-gray-400 hover:text-white'
             }`}
           >
-            🔵 Blue
+            <span className="flex items-center justify-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-full bg-blue-500" />
+              <span>Blue</span>
+            </span>
           </button>
           <button
             onClick={() => setActiveSection('red')}
@@ -126,7 +143,10 @@ export function LiveGameStatsView({
                 : 'bg-gray-800 text-gray-400 hover:text-white'
             }`}
           >
-            🔴 Red
+            <span className="flex items-center justify-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-full bg-red-500" />
+              <span>Red</span>
+            </span>
           </button>
         </div>
       </div>
@@ -299,18 +319,18 @@ function TeamStatsCard({ team, teamName, teamColor, teamLogo }: TeamStatsCardPro
       </div>
       
       <div className="grid grid-cols-3 gap-2 text-sm">
-        <StatItem icon="⚔️" label="Kills" value={team.totalKills} />
-        <StatItem icon="💰" label="Gold" value={`${(team.totalGold / 1000).toFixed(1)}k`} />
-        <StatItem icon="🏰" label="Towers" value={team.towers} />
-        <StatItem icon="🐉" label="Dragons" value={team.dragons.length} />
-        <StatItem icon="👹" label="Barons" value={team.barons} />
-        <StatItem icon="🔮" label="Inhibs" value={team.inhibitors} />
+        <StatItem icon={<StatsIcon className="w-5 h-5" />} label="Kills" value={team.totalKills} />
+        <StatItem icon={<span className="text-lg">💰</span>} label="Gold" value={`${(team.totalGold / 1000).toFixed(1)}k`} />
+        <StatItem icon={<Tower className="w-5 h-5" />} label="Towers" value={team.towers} />
+        <StatItem icon={<DragonCloud className="w-5 h-5" />} label="Dragons" value={team.dragons.length} />
+        <StatItem icon={<Baron className="w-5 h-5" />} label="Barons" value={team.barons} />
+        <StatItem icon={<Inhibitor className="w-5 h-5" />} label="Inhibs" value={team.inhibitors} />
       </div>
     </div>
   );
 }
 
-function StatItem({ icon, label, value }: { icon: string; label: string; value: number | string }) {
+function StatItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: number | string }) {
   return (
     <div className="bg-gray-900/30 rounded p-2 text-center">
       <div className="text-lg mb-0.5">{icon}</div>
@@ -388,8 +408,9 @@ function DragonsDisplay({ blueTeam, redTeam }: { blueTeam: TeamStats; redTeam: T
         <div className="flex gap-2 flex-wrap">
           {blueTeam.dragons.length > 0 ? (
             blueTeam.dragons.map((dragon, i) => (
-              <span key={i} className="px-2 py-1 bg-blue-800/30 rounded text-xs md:text-sm">
-                🐉 {dragon}
+              <span key={i} className="px-2 py-1 bg-blue-800/30 rounded text-xs md:text-sm flex items-center gap-2">
+                {renderDragonIcon(dragon)}
+                <span>{dragon}</span>
               </span>
             ))
           ) : (
@@ -403,8 +424,9 @@ function DragonsDisplay({ blueTeam, redTeam }: { blueTeam: TeamStats; redTeam: T
         <div className="flex gap-2 flex-wrap md:justify-end">
           {redTeam.dragons.length > 0 ? (
             redTeam.dragons.map((dragon, i) => (
-              <span key={i} className="px-2 py-1 bg-red-800/30 rounded text-xs md:text-sm">
-                🐉 {dragon}
+              <span key={i} className="px-2 py-1 bg-red-800/30 rounded text-xs md:text-sm flex items-center gap-2 justify-end">
+                <span>{dragon}</span>
+                {renderDragonIcon(dragon)}
               </span>
             ))
           ) : (
@@ -414,6 +436,18 @@ function DragonsDisplay({ blueTeam, redTeam }: { blueTeam: TeamStats; redTeam: T
       </div>
     </div>
   );
+}
+
+function renderDragonIcon(dragonType: string) {
+  const t = dragonType.toLowerCase();
+  if (t.includes('infernal')) return <DragonInfernal className="w-4 h-4" />;
+  if (t.includes('cloud')) return <DragonCloud className="w-4 h-4" />;
+  if (t.includes('ocean')) return <DragonOcean className="w-4 h-4" />;
+  if (t.includes('mountain')) return <DragonMountain className="w-4 h-4" />;
+  if (t.includes('chemtech')) return <DragonChemtech className="w-4 h-4" />;
+  if (t.includes('hextech')) return <DragonHextech className="w-4 h-4" />;
+  if (t.includes('elder')) return <DragonElder className="w-4 h-4" />;
+  return <DragonCloud className="w-4 h-4" />;
 }
 
 interface PlayerStatsTableProps {
@@ -445,15 +479,15 @@ function PlayerStatsTable({
     return `https://ddragon.leagueoflegends.com/cdn/${patchVersion}/img/item/${itemId}.png`;
   };
 
-  const getRoleIcon = (role: string) => {
-    const roleEmojis: Record<string, string> = {
-      'top': '⬆️',
-      'jungle': '🌳',
-      'mid': '⚡',
-      'bottom': '🎯',
-      'support': '🛡️',
+  const getRoleIcon = (role: string): JSX.Element => {
+    const roleIcons: Record<string, JSX.Element> = {
+      'top': <span className="text-xl">⬆️</span>,
+      'jungle': <span className="text-xl">🌳</span>,
+      'mid': <span className="text-xl">⚡</span>,
+      'bottom': <span className="text-xl">🎯</span>,
+      'support': <span className="text-xl">🛡️</span>,
     };
-    return roleEmojis[role.toLowerCase()] || '❓';
+    return roleIcons[role.toLowerCase()] || <span className="text-xl">❓</span>;
   };
 
   const calculateGoldDiff = (player: WindowParticipant, opponent?: WindowParticipant) => {
@@ -631,11 +665,11 @@ function calculateGameTime(startTime?: string, currentTime?: string): string {
 function getGameStateDisplay(gameState: 'in_game' | 'paused' | 'finished') {
   switch (gameState) {
     case 'in_game':
-      return { text: '🔴 LIVE', color: 'text-green-400', bgColor: 'bg-green-900/30' };
+      return { text: 'LIVE', color: 'text-green-400', bgColor: 'bg-green-900/30' };
     case 'paused':
-      return { text: '⏸️ PAUSED', color: 'text-yellow-400', bgColor: 'bg-yellow-900/30' };
+      return { text: 'PAUSED', color: 'text-yellow-400', bgColor: 'bg-yellow-900/30' };
     case 'finished':
-      return { text: '✅ FINISHED', color: 'text-gray-400', bgColor: 'bg-gray-900/30' };
+      return { text: 'FINISHED', color: 'text-gray-400', bgColor: 'bg-gray-900/30' };
     default:
       return { text: 'UNKNOWN', color: 'text-gray-400', bgColor: 'bg-gray-900/30' };
   }

@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import TwitchIcon from '@/components/icons/TwitchIcon';
+import YouTubeIcon from '@/components/icons/YouTubeIcon';
+import LiveBadge from '@/components/icons/LiveBadge';
 
 interface StreamData {
   mediaLocale: {
@@ -74,7 +77,7 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
   if (!selectedStream || !selectedStream.parameter) {
     return (
       <div className="bg-riot-dark border border-gray-600 rounded-lg p-6 text-center">
-        <div className="text-gray-400 mb-2">📺</div>
+  <div className="text-gray-400 mb-2"><TwitchIcon className="w-6 h-6" /></div>
         <div className="text-sm text-gray-300">No embeddable stream available</div>
         <div className="text-xs text-gray-500 mt-1">Stream may only be available on the platform website</div>
       </div>
@@ -112,7 +115,7 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
     );
   }
 
-  const providerIcon = selectedStream.provider.toLowerCase() === 'youtube' ? '▶️' : '📺';
+  const providerIcon = selectedStream.provider.toLowerCase() === 'youtube' ? <YouTubeIcon className="w-5 h-5" /> : <TwitchIcon className="w-5 h-5" />;
   const providerColor = selectedStream.provider.toLowerCase() === 'youtube' 
     ? 'text-red-400' 
     : 'text-purple-400';
@@ -199,7 +202,7 @@ const EmbeddedStreamPlayer: React.FC<EmbeddedStreamPlayerProps> = ({ streams, on
         {!isTheatreMode && (
           <div className="p-2 bg-riot-gray/50 border-t border-gray-600">
             <div className="flex items-center justify-between text-xs text-gray-400">
-              <span>🔴 LIVE</span>
+              <LiveBadge>LIVE</LiveBadge>
               <span>
                 {streams.length} language{streams.length !== 1 ? 's' : ''} available
               </span>

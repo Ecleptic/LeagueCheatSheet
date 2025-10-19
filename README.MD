@@ -68,6 +68,8 @@ Perfect for friends, family, or newcomers trying to understand what the casters 
 - First Blood, Ace, Pentakill
 - Draft, Ban Phase, Blue/Red Side
 
+This feature is available now at `/terms` — a quick searchable glossary for viewers with examples and related terms. You can optionally enable fetching community definitions from Urban Dictionary (opt-in and cached).
+
 ### 📱 Spectator-Friendly Design
 - **Dual Screen Setup**: Keep this open on your phone/tablet while watching on TV
 - **Quick Lookups**: Find info in seconds, get back to the action

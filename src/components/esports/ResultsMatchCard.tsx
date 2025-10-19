@@ -1,8 +1,11 @@
 'use client';
 
 import React from 'react';
+import { guessTeamLogo } from '@/lib/esports/teamLogos';
 import Image from 'next/image';
 import { Match } from '@/lib/esports/api';
+import TwitchIcon from '@/components/icons/TwitchIcon';
+import YouTubeIcon from '@/components/icons/YouTubeIcon';
 
 interface ResultsMatchCardProps {
   match: Match;
@@ -145,8 +148,9 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
             </div>
             <div className="flex items-center space-x-2">
               {flags.includes('hasVod') && (
-                <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded">
-                  📺 VOD
+                <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded flex items-center gap-1">
+                  <TwitchIcon className="w-4 h-4" />
+                  VOD
                 </span>
               )}
               {match.strategy && (
@@ -167,7 +171,7 @@ const ResultsMatchCard: React.FC<ResultsMatchCardProps> = ({ match }) => {
               <div key={team.id || index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Image
-                    src={team.image}
+                    src={team.image || guessTeamLogo((team as any).slug || team.name)}
                     alt={team.name}
                     width={32}
                     height={32}

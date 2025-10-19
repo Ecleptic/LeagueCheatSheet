@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import StatsIcon from '@/components/icons/StatsIcon';
 import { useTeam } from '../../contexts/TeamContext';
 import MultiStepTeamBuilder from './MultiStepTeamBuilder';
 import ConfirmationModal from '../modals/ConfirmationModal';
@@ -152,7 +153,7 @@ const TeamView: React.FC = () => {
           {/* Header */}
           <div className="text-center py-8">
             <h1 className="text-4xl font-bold text-white mb-4">
-              ⚔️ League Team Builder
+              <span className="flex items-center gap-2"><StatsIcon className="w-5 h-5" /> League Team Builder</span>
             </h1>
             <p className="text-blue-200 text-lg">
               Create your perfect League of Legends team composition
